@@ -7,7 +7,7 @@
 
 <html class="theme-next muse use-motion" lang="">
 <head>
-  <meta charset="UTF-8"/>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 <meta name="theme-color" content="#222">
@@ -153,7 +153,7 @@
       var s = document.getElementsByTagName("script")[0];
       s.parentNode.insertBefore(hm, s);
     })();
-  </script>
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
 
@@ -173,7 +173,7 @@
     
   
 
-  <div class="container sidebar-position-left 
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left 
    page-home 
  ">
     <div class="headband"></div>
@@ -511,12 +511,10 @@
           
             <h1 id="每周leetcode（3）"><a href="#每周leetcode（3）" class="headerlink" title="每周leetcode（3）"></a>每周leetcode（3）</h1><h2 id="477-Total-Hamming-Distance"><a href="#477-Total-Hamming-Distance" class="headerlink" title="477 Total Hamming Distance"></a>477 Total Hamming Distance</h2><p><strong>Description</strong></p>
 <blockquote>
-<p>The Hamming distance between two integers is the number of positions at which the corresponding bits are different.<br><br>Now your job is to find the total Hamming distance between all pairs of the given numbers.<br><br>Example:<br><br>Input: 4, 14, 2<br><br>Output: 6<br></p>
+<p>The Hamming distance between two integers is the number of positions at which the corresponding bits are different.&lt;/br&gt;<br>Now your job is to find the total Hamming distance between all pairs of the given numbers.&lt;/br&gt;<br>Example:&lt;/br&gt;<br>Input: 4, 14, 2&lt;/br&gt;<br>Output: 6&lt;/br&gt;</p>
+<p>Explanation: In binary representation, the 4 is 0100, 14 is 1110, and 2 is 0010 (just<br>showing the four bits relevant in this case). So the answer will be:&lt;/br&gt;<br>HammingDistance(4, 14) + HammingDistance(4, 2) + HammingDistance(14, 2) = 2 </p>
 </blockquote>
-<blockquote>
-<p>Explanation: In binary representation, the 4 is 0100, 14 is 1110, and 2 is 0010 (just<br>showing the four bits relevant in this case). So the answer will be:<br><br>HammingDistance(4, 14) + HammingDistance(4, 2) + HammingDistance(14, 2) = 2 </p>
-</blockquote>
-<p><strong>思路</strong><br>如果用组合的方法也能做，但是复杂度太高了，现在拆解一下这个问题<br><br>4   &nbsp; 0100 <br><br>2   &nbsp; 0010 <br><br>14  1110 <br><br>第一位大家都是0，没有不同；第二位，一个0，两个1，那么比较的话，会出现2次不同；第三位，两个1，一个0，2次不同；第四位，两个0，一个1，两次不同。最后有6次不同。<br><br>以此类推到32bits<br><br><strong>Submission</strong></p>
+<p><strong>思路</strong><br>如果用组合的方法也能做，但是复杂度太高了，现在拆解一下这个问题&lt;/br&gt;<br>4   &nbsp; 0100 &lt;/br&gt;<br>2   &nbsp; 0010 &lt;/br&gt;<br>14  1110 &lt;/br&gt;<br>第一位大家都是0，没有不同；第二位，一个0，两个1，那么比较的话，会出现2次不同；第三位，两个1，一个0，2次不同；第四位，两个0，一个1，两次不同。最后有6次不同。&lt;/br&gt;<br>以此类推到32bits&lt;/br&gt;<br><strong>Submission</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class Solution(object):</span><br><span class="line">    def totalHammingDistance(self, nums):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :type nums: List[int]</span><br><span class="line">        :rtype: int</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        res=0</span><br><span class="line">        for i in range(32):</span><br><span class="line">            count_one=0</span><br><span class="line">            for num in nums:</span><br><span class="line">                count_one+=(num&gt;&gt;i)&amp;1</span><br><span class="line">            count_zero=len(nums)-count_one</span><br><span class="line">            count_mul=count_one*count_zero</span><br><span class="line">            res+=count_mul</span><br><span class="line">        return res</span><br></pre></td></tr></table></figure>
 
           
@@ -659,8 +657,7 @@
       
         
           
-            <h1 id="每周Leetcode-2"><a href="#每周Leetcode-2" class="headerlink" title="每周Leetcode(2)"></a>每周Leetcode(2)</h1><p>## </p>
-
+            <h1 id="每周Leetcode-2"><a href="#每周Leetcode-2" class="headerlink" title="每周Leetcode(2)"></a>每周Leetcode(2)</h1><h2 id=""><a href="#" class="headerlink" title=" "></a> </h2>
           
         
       
@@ -991,8 +988,7 @@
       
         
           
-            <p>#迁移测试</p>
-
+            <h1 id="迁移测试"><a href="#迁移测试" class="headerlink" title="迁移测试"></a>迁移测试</h1>
           
         
       
@@ -1269,36 +1265,36 @@
 <li>稀疏编码器 </li>
 </ul>
 <p>&emsp;&emsp;&emsp;在重构误差的基础上，引入编码层的的稀疏惩罚</p>
-<center><img src="https://i.imgur.com/9oeb7m9.png" alt=""></center>
+<center>![](https://i.imgur.com/9oeb7m9.png)</center>
 
 <p>&emsp;&emsp; 这个加入的稀疏诱导项推导可以参考[2]的稀疏编码，其作用是提取一些特殊的特征，我的理解是只响应基向量的某些成分忽略其他部分。</p>
 <ul>
 <li>去躁自编码器</li>
 </ul>
-<p>&emsp;&emsp;&emsp; 此编码器把目标做一个转换,<br><br>&emsp;&emsp;&emsp; 传统自编码器：<img src="https://i.imgur.com/IIdqYK5.png" alt=""><br>&emsp;&emsp;&emsp; 去躁自编码器：<img src="https://i.imgur.com/COyvAL6.png" alt=""><br>这部分书上写的很详细了。其实就是多设计了加入噪声的结构，训练解码部分对噪声的处理，再给一张带有噪声的图片，这个编码器就可以对图片的噪声信息做处理了。<br><br>当然还有很多种传统自编码器的变形，他们可以分为两种改变：对约束项处理（稀疏惩罚），对结构优化（变分）。</p>
-<h2 id="代码部分"><a href="#代码部分" class="headerlink" title="代码部分"></a>代码部分</h2><p>&emsp;&emsp;基于tensflow写了一个简单的AE的代码,自编码器的部分搭建非常简单：<br><br><strong>Encoder:</strong></p>
+<p>&emsp;&emsp;&emsp; 此编码器把目标做一个转换,&lt;/br&gt;<br>&emsp;&emsp;&emsp; 传统自编码器：<img src="https://i.imgur.com/IIdqYK5.png" alt=""><br>&emsp;&emsp;&emsp; 去躁自编码器：<img src="https://i.imgur.com/COyvAL6.png" alt=""><br>这部分书上写的很详细了。其实就是多设计了加入噪声的结构，训练解码部分对噪声的处理，再给一张带有噪声的图片，这个编码器就可以对图片的噪声信息做处理了。<br>&lt;/br&gt;当然还有很多种传统自编码器的变形，他们可以分为两种改变：对约束项处理（稀疏惩罚），对结构优化（变分）。</p>
+<h2 id="代码部分"><a href="#代码部分" class="headerlink" title="代码部分"></a>代码部分</h2><p>&emsp;&emsp;基于tensflow写了一个简单的AE的代码,自编码器的部分搭建非常简单：&lt;/br&gt;<br><strong>Encoder:</strong></p>
 <pre><code>def encoder(input):
-    layer_1=add_layer(input,weights[&apos;encoder_h1&apos;],biases[&apos;encoder_b1&apos;])
-    layer_2=add_layer(layer_1,weights[&apos;encoder_h2&apos;],biases[&apos;encoder_b2&apos;])
-    layer_3=add_layer(layer_2,weights[&apos;encoder_h3&apos;],biases[&apos;encoder_b3&apos;])
+    layer_1=add_layer(input,weights[&#39;encoder_h1&#39;],biases[&#39;encoder_b1&#39;])
+    layer_2=add_layer(layer_1,weights[&#39;encoder_h2&#39;],biases[&#39;encoder_b2&#39;])
+    layer_3=add_layer(layer_2,weights[&#39;encoder_h3&#39;],biases[&#39;encoder_b3&#39;])
     return layer_3
 </code></pre><p>&emsp;其中add_layer() 是一个添加全连接层的方法，可以换成卷积重写这个方法。</p>
 <pre><code>def add_layer(input,weight,bias):
     return tf.nn.sigmoid(tf.add(tf.matmul(input,weight),bias))
 </code></pre><p><strong>Decoder:</strong></p>
 <pre><code>def decoder(input):
-    layer_1 = add_layer(input, weights[&apos;decoder_h1&apos;], biases[&apos;decoder_b1&apos;])
-    layer_2 = add_layer(layer_1, weights[&apos;decoder_h2&apos;], biases[&apos;decoder_b2&apos;])
-    layer_3 = add_layer(layer_2, weights[&apos;decoder_h3&apos;], biases[&apos;decoder_b3&apos;])
+    layer_1 = add_layer(input, weights[&#39;decoder_h1&#39;], biases[&#39;decoder_b1&#39;])
+    layer_2 = add_layer(layer_1, weights[&#39;decoder_h2&#39;], biases[&#39;decoder_b2&#39;])
+    layer_3 = add_layer(layer_2, weights[&#39;decoder_h3&#39;], biases[&#39;decoder_b3&#39;])
     return layer_3
 </code></pre><p><strong>重构误差loss：</strong></p>
 <pre><code>loss=tf.reduce_mean(tf.pow(y_true-y_pred,2))
 </code></pre><p>&emsp;&emsp;网络最重要的部分已经搭建完成，剩下的就是data I/O，优化器的选择。<br>全部代码在这里可以看到：<a href="https://github.com/LicharYuan/AI_Net/blob/master/tf/AE_tf.py" target="_blank" rel="noopener">AE的tf代码</a>。最近在进行pytorch的学习，pytorch的AE代码<a href="https://github.com/LicharYuan/AI_Net/blob/master/py/AE_pt.py" target="_blank" rel="noopener">在这</a>。</p>
-<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p><br><br>迭代0次：</p>
+<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>&lt;/br&gt;<br>迭代0次：</p>
 <p><img src="https://i.imgur.com/8Hip2Hl.png" alt=""></p>
-<p>迭代1000次：<br></p>
-<p><img src="https://i.imgur.com/NjsIwB4.png" alt=""><br><br></p>
-<p>迭代9000次：<br></p>
+<p>迭代1000次：&lt;/br&gt;</p>
+<p><img src="https://i.imgur.com/NjsIwB4.png" alt=""><br>&lt;/br&gt;</p>
+<p>迭代9000次：&lt;/br&gt;</p>
 <p><img src="https://i.imgur.com/D6bTWtU.png" alt=""></p>
 <h2 id="多余的想法"><a href="#多余的想法" class="headerlink" title="多余的想法"></a>多余的想法</h2><p>&emsp;&emsp;更好的效果有变分自编码器，在编码-解码的结构上加入一层潜空间，潜空间的潜变量可以更好的拟合原始的分布，因为它加入了一些分布限制，理论推导可以看论文[3]，又有人结合流行的框架GANs (Generative adversarial nets)来达到更好的生成效果。<br>&emsp;&emsp;这里记录一个问题，AE/VAE也好生成模型如何控制属性，比如我现在就需要5这个数字，其他的都不需要，那么怎么在自编码器中加入这个限制，我知道可以做到自编码器只训练数字为5的图像，那么输出也是5。这样太麻烦，那我需要123，就需要训练三个自编码器。有没有办法把这些整合到一个自编码器中呢？后续论文看到再来补充。</p>
 <h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p>[1]深度学习，第十四章，自编码器<br>[2]<a href="http://ufldl.stanford.edu/wiki/index.php/%E7%A8%80%E7%96%8F%E7%BC%96%E7%A0%81" target="_blank" rel="noopener">http://ufldl.stanford.edu/wiki/index.php/%E7%A8%80%E7%96%8F%E7%BC%96%E7%A0%81</a><br>[3]<a href="https://arxiv.org/abs/1606.05908" target="_blank" rel="noopener">https://arxiv.org/abs/1606.05908</a><br>[4]<a href="https://github.com/aymericdamien/TensorFlow-Examples" target="_blank" rel="noopener">https://github.com/aymericdamien/TensorFlow-Examples</a><br>[5]<a href="https://github.com/SherlockLiao/pytorch-beginner" target="_blank" rel="noopener">https://github.com/SherlockLiao/pytorch-beginner</a></p>
@@ -1694,7 +1690,7 @@
   
 
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
 

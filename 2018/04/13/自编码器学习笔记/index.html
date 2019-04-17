@@ -7,7 +7,7 @@
 
 <html class="theme-next muse use-motion" lang="">
 <head>
-  <meta charset="UTF-8"/>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 <meta name="theme-color" content="#222">
@@ -94,15 +94,14 @@
 
 
 
-<meta name="description" content="什么是自编码器?&amp;emsp;&amp;emsp;自编码器是一种无监督型神经网络，将输入“复制”到输出。一般可以分为编码-解码两个部分，这两个部分的结构可以是全连接层/卷积层/其他网络。其目的并不是复制输入，而是学习到输入的有用部分（相关特征）。 自编码器的变形 稀疏编码器   &amp;emsp;&amp;emsp;&amp;emsp;在重构误差的基础上，引入编码层的的稀疏惩罚   &amp;emsp;&amp;emsp; 这个加入的稀疏诱导项">
+<meta name="description" content="什么是自编码器?&amp;emsp;&amp;emsp;自编码器是一种无监督型神经网络，将输入“复制”到输出。一般可以分为编码-解码两个部分，这两个部分的结构可以是全连接层/卷积层/其他网络。其目的并不是复制输入，而是学习到输入的有用部分（相关特征）。 自编码器的变形 稀疏编码器   &amp;emsp;&amp;emsp;&amp;emsp;在重构误差的基础上，引入编码层的的稀疏惩罚 ![](https://i.imgur.com/9">
 <meta name="keywords" content="Notes">
 <meta property="og:type" content="article">
 <meta property="og:title" content="自编码器学习笔记">
 <meta property="og:url" content="http://licharyuan.com/2018/04/13/自编码器学习笔记/index.html">
 <meta property="og:site_name" content="Liuchun Yuan">
-<meta property="og:description" content="什么是自编码器?&amp;emsp;&amp;emsp;自编码器是一种无监督型神经网络，将输入“复制”到输出。一般可以分为编码-解码两个部分，这两个部分的结构可以是全连接层/卷积层/其他网络。其目的并不是复制输入，而是学习到输入的有用部分（相关特征）。 自编码器的变形 稀疏编码器   &amp;emsp;&amp;emsp;&amp;emsp;在重构误差的基础上，引入编码层的的稀疏惩罚   &amp;emsp;&amp;emsp; 这个加入的稀疏诱导项">
+<meta property="og:description" content="什么是自编码器?&amp;emsp;&amp;emsp;自编码器是一种无监督型神经网络，将输入“复制”到输出。一般可以分为编码-解码两个部分，这两个部分的结构可以是全连接层/卷积层/其他网络。其目的并不是复制输入，而是学习到输入的有用部分（相关特征）。 自编码器的变形 稀疏编码器   &amp;emsp;&amp;emsp;&amp;emsp;在重构误差的基础上，引入编码层的的稀疏惩罚 ![](https://i.imgur.com/9">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://i.imgur.com/9oeb7m9.png">
 <meta property="og:image" content="https://i.imgur.com/IIdqYK5.png">
 <meta property="og:image" content="https://i.imgur.com/COyvAL6.png">
 <meta property="og:image" content="https://i.imgur.com/8Hip2Hl.png">
@@ -111,8 +110,8 @@
 <meta property="og:updated_time" content="2018-04-15T09:41:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自编码器学习笔记">
-<meta name="twitter:description" content="什么是自编码器?&amp;emsp;&amp;emsp;自编码器是一种无监督型神经网络，将输入“复制”到输出。一般可以分为编码-解码两个部分，这两个部分的结构可以是全连接层/卷积层/其他网络。其目的并不是复制输入，而是学习到输入的有用部分（相关特征）。 自编码器的变形 稀疏编码器   &amp;emsp;&amp;emsp;&amp;emsp;在重构误差的基础上，引入编码层的的稀疏惩罚   &amp;emsp;&amp;emsp; 这个加入的稀疏诱导项">
-<meta name="twitter:image" content="https://i.imgur.com/9oeb7m9.png">
+<meta name="twitter:description" content="什么是自编码器?&amp;emsp;&amp;emsp;自编码器是一种无监督型神经网络，将输入“复制”到输出。一般可以分为编码-解码两个部分，这两个部分的结构可以是全连接层/卷积层/其他网络。其目的并不是复制输入，而是学习到输入的有用部分（相关特征）。 自编码器的变形 稀疏编码器   &amp;emsp;&amp;emsp;&amp;emsp;在重构误差的基础上，引入编码层的的稀疏惩罚 ![](https://i.imgur.com/9">
+<meta name="twitter:image" content="https://i.imgur.com/IIdqYK5.png">
 
 
 
@@ -162,7 +161,7 @@
       var s = document.getElementsByTagName("script")[0];
       s.parentNode.insertBefore(hm, s);
     })();
-  </script>
+  </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
 
@@ -182,7 +181,7 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail ">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -372,36 +371,36 @@
 <li>稀疏编码器 </li>
 </ul>
 <p>&emsp;&emsp;&emsp;在重构误差的基础上，引入编码层的的稀疏惩罚</p>
-<center><img src="https://i.imgur.com/9oeb7m9.png" alt=""></center>
+<center>![](https://i.imgur.com/9oeb7m9.png)</center>
 
 <p>&emsp;&emsp; 这个加入的稀疏诱导项推导可以参考[2]的稀疏编码，其作用是提取一些特殊的特征，我的理解是只响应基向量的某些成分忽略其他部分。</p>
 <ul>
 <li>去躁自编码器</li>
 </ul>
-<p>&emsp;&emsp;&emsp; 此编码器把目标做一个转换,<br><br>&emsp;&emsp;&emsp; 传统自编码器：<img src="https://i.imgur.com/IIdqYK5.png" alt=""><br>&emsp;&emsp;&emsp; 去躁自编码器：<img src="https://i.imgur.com/COyvAL6.png" alt=""><br>这部分书上写的很详细了。其实就是多设计了加入噪声的结构，训练解码部分对噪声的处理，再给一张带有噪声的图片，这个编码器就可以对图片的噪声信息做处理了。<br><br>当然还有很多种传统自编码器的变形，他们可以分为两种改变：对约束项处理（稀疏惩罚），对结构优化（变分）。</p>
-<h2 id="代码部分"><a href="#代码部分" class="headerlink" title="代码部分"></a>代码部分</h2><p>&emsp;&emsp;基于tensflow写了一个简单的AE的代码,自编码器的部分搭建非常简单：<br><br><strong>Encoder:</strong></p>
+<p>&emsp;&emsp;&emsp; 此编码器把目标做一个转换,&lt;/br&gt;<br>&emsp;&emsp;&emsp; 传统自编码器：<img src="https://i.imgur.com/IIdqYK5.png" alt=""><br>&emsp;&emsp;&emsp; 去躁自编码器：<img src="https://i.imgur.com/COyvAL6.png" alt=""><br>这部分书上写的很详细了。其实就是多设计了加入噪声的结构，训练解码部分对噪声的处理，再给一张带有噪声的图片，这个编码器就可以对图片的噪声信息做处理了。<br>&lt;/br&gt;当然还有很多种传统自编码器的变形，他们可以分为两种改变：对约束项处理（稀疏惩罚），对结构优化（变分）。</p>
+<h2 id="代码部分"><a href="#代码部分" class="headerlink" title="代码部分"></a>代码部分</h2><p>&emsp;&emsp;基于tensflow写了一个简单的AE的代码,自编码器的部分搭建非常简单：&lt;/br&gt;<br><strong>Encoder:</strong></p>
 <pre><code>def encoder(input):
-    layer_1=add_layer(input,weights[&apos;encoder_h1&apos;],biases[&apos;encoder_b1&apos;])
-    layer_2=add_layer(layer_1,weights[&apos;encoder_h2&apos;],biases[&apos;encoder_b2&apos;])
-    layer_3=add_layer(layer_2,weights[&apos;encoder_h3&apos;],biases[&apos;encoder_b3&apos;])
+    layer_1=add_layer(input,weights[&#39;encoder_h1&#39;],biases[&#39;encoder_b1&#39;])
+    layer_2=add_layer(layer_1,weights[&#39;encoder_h2&#39;],biases[&#39;encoder_b2&#39;])
+    layer_3=add_layer(layer_2,weights[&#39;encoder_h3&#39;],biases[&#39;encoder_b3&#39;])
     return layer_3
 </code></pre><p>&emsp;其中add_layer() 是一个添加全连接层的方法，可以换成卷积重写这个方法。</p>
 <pre><code>def add_layer(input,weight,bias):
     return tf.nn.sigmoid(tf.add(tf.matmul(input,weight),bias))
 </code></pre><p><strong>Decoder:</strong></p>
 <pre><code>def decoder(input):
-    layer_1 = add_layer(input, weights[&apos;decoder_h1&apos;], biases[&apos;decoder_b1&apos;])
-    layer_2 = add_layer(layer_1, weights[&apos;decoder_h2&apos;], biases[&apos;decoder_b2&apos;])
-    layer_3 = add_layer(layer_2, weights[&apos;decoder_h3&apos;], biases[&apos;decoder_b3&apos;])
+    layer_1 = add_layer(input, weights[&#39;decoder_h1&#39;], biases[&#39;decoder_b1&#39;])
+    layer_2 = add_layer(layer_1, weights[&#39;decoder_h2&#39;], biases[&#39;decoder_b2&#39;])
+    layer_3 = add_layer(layer_2, weights[&#39;decoder_h3&#39;], biases[&#39;decoder_b3&#39;])
     return layer_3
 </code></pre><p><strong>重构误差loss：</strong></p>
 <pre><code>loss=tf.reduce_mean(tf.pow(y_true-y_pred,2))
 </code></pre><p>&emsp;&emsp;网络最重要的部分已经搭建完成，剩下的就是data I/O，优化器的选择。<br>全部代码在这里可以看到：<a href="https://github.com/LicharYuan/AI_Net/blob/master/tf/AE_tf.py" target="_blank" rel="noopener">AE的tf代码</a>。最近在进行pytorch的学习，pytorch的AE代码<a href="https://github.com/LicharYuan/AI_Net/blob/master/py/AE_pt.py" target="_blank" rel="noopener">在这</a>。</p>
-<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p><br><br>迭代0次：</p>
+<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>&lt;/br&gt;<br>迭代0次：</p>
 <p><img src="https://i.imgur.com/8Hip2Hl.png" alt=""></p>
-<p>迭代1000次：<br></p>
-<p><img src="https://i.imgur.com/NjsIwB4.png" alt=""><br><br></p>
-<p>迭代9000次：<br></p>
+<p>迭代1000次：&lt;/br&gt;</p>
+<p><img src="https://i.imgur.com/NjsIwB4.png" alt=""><br>&lt;/br&gt;</p>
+<p>迭代9000次：&lt;/br&gt;</p>
 <p><img src="https://i.imgur.com/D6bTWtU.png" alt=""></p>
 <h2 id="多余的想法"><a href="#多余的想法" class="headerlink" title="多余的想法"></a>多余的想法</h2><p>&emsp;&emsp;更好的效果有变分自编码器，在编码-解码的结构上加入一层潜空间，潜空间的潜变量可以更好的拟合原始的分布，因为它加入了一些分布限制，理论推导可以看论文[3]，又有人结合流行的框架GANs (Generative adversarial nets)来达到更好的生成效果。<br>&emsp;&emsp;这里记录一个问题，AE/VAE也好生成模型如何控制属性，比如我现在就需要5这个数字，其他的都不需要，那么怎么在自编码器中加入这个限制，我知道可以做到自编码器只训练数字为5的图像，那么输出也是5。这样太麻烦，那我需要123，就需要训练三个自编码器。有没有办法把这些整合到一个自编码器中呢？后续论文看到再来补充。</p>
 <h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p>[1]深度学习，第十四章，自编码器<br>[2]<a href="http://ufldl.stanford.edu/wiki/index.php/%E7%A8%80%E7%96%8F%E7%BC%96%E7%A0%81" target="_blank" rel="noopener">http://ufldl.stanford.edu/wiki/index.php/%E7%A8%80%E7%96%8F%E7%BC%96%E7%A0%81</a><br>[3]<a href="https://arxiv.org/abs/1606.05908" target="_blank" rel="noopener">https://arxiv.org/abs/1606.05908</a><br>[4]<a href="https://github.com/aymericdamien/TensorFlow-Examples" target="_blank" rel="noopener">https://github.com/aymericdamien/TensorFlow-Examples</a><br>[5]<a href="https://github.com/SherlockLiao/pytorch-beginner" target="_blank" rel="noopener">https://github.com/SherlockLiao/pytorch-beginner</a></p>
@@ -708,7 +707,7 @@
   
 
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
 
