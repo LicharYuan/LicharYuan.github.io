@@ -94,18 +94,18 @@
 
 
 
-<meta name="description" content="论文笔记Paper 🔗 ProxylessNAS &amp;lt;/br&amp;gt;这篇文章主要解决NAS代理机制下无法搜索到全局最优的问题，改进搜索策略，一定程度上解决资源消耗的问题。&amp;lt;/br&amp;gt; 前言这篇文章是基于DARTs改的，谈谈DARTs的一些问题：  只搜索cell，然后不断的堆叠起来，实际上只要网络堆叠的够深，性能并不会太差 一些operation的结构参数非常接近，比如两个op的结">
+<meta name="description" content="论文笔记Paper 🔗 ProxylessNAS这篇文章主要解决NAS代理机制下无法搜索到全局最优的问题，改进搜索策略，一定程度上解决资源消耗的问题。 前言这篇文章是基于DARTs改的，谈谈DARTs的一些问题：  只搜索cell，然后不断的堆叠起来，实际上只要网络堆叠的够深，性能并不会太差 一些operation的结构参数非常接近，比如两个op的结构参数分别是20.2%，20.1%，似乎选择2">
 <meta name="keywords" content="Papers">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ProxylessNAS论文笔记">
 <meta property="og:url" content="http://licharyuan.com/2019/04/17/ProxylessNAS论文笔记/index.html">
 <meta property="og:site_name" content="Liuchun Yuan">
-<meta property="og:description" content="论文笔记Paper 🔗 ProxylessNAS &amp;lt;/br&amp;gt;这篇文章主要解决NAS代理机制下无法搜索到全局最优的问题，改进搜索策略，一定程度上解决资源消耗的问题。&amp;lt;/br&amp;gt; 前言这篇文章是基于DARTs改的，谈谈DARTs的一些问题：  只搜索cell，然后不断的堆叠起来，实际上只要网络堆叠的够深，性能并不会太差 一些operation的结构参数非常接近，比如两个op的结">
+<meta property="og:description" content="论文笔记Paper 🔗 ProxylessNAS这篇文章主要解决NAS代理机制下无法搜索到全局最优的问题，改进搜索策略，一定程度上解决资源消耗的问题。 前言这篇文章是基于DARTs改的，谈谈DARTs的一些问题：  只搜索cell，然后不断的堆叠起来，实际上只要网络堆叠的够深，性能并不会太差 一些operation的结构参数非常接近，比如两个op的结构参数分别是20.2%，20.1%，似乎选择2">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-17T07:04:28.922Z">
+<meta property="og:updated_time" content="2019-04-17T07:46:41.674Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ProxylessNAS论文笔记">
-<meta name="twitter:description" content="论文笔记Paper 🔗 ProxylessNAS &amp;lt;/br&amp;gt;这篇文章主要解决NAS代理机制下无法搜索到全局最优的问题，改进搜索策略，一定程度上解决资源消耗的问题。&amp;lt;/br&amp;gt; 前言这篇文章是基于DARTs改的，谈谈DARTs的一些问题：  只搜索cell，然后不断的堆叠起来，实际上只要网络堆叠的够深，性能并不会太差 一些operation的结构参数非常接近，比如两个op的结">
+<meta name="twitter:description" content="论文笔记Paper 🔗 ProxylessNAS这篇文章主要解决NAS代理机制下无法搜索到全局最优的问题，改进搜索策略，一定程度上解决资源消耗的问题。 前言这篇文章是基于DARTs改的，谈谈DARTs的一些问题：  只搜索cell，然后不断的堆叠起来，实际上只要网络堆叠的够深，性能并不会太差 一些operation的结构参数非常接近，比如两个op的结构参数分别是20.2%，20.1%，似乎选择2">
 
 
 
@@ -361,7 +361,7 @@
 
       
         <h1 id="论文笔记"><a href="#论文笔记" class="headerlink" title="论文笔记"></a>论文笔记</h1><p><a href="https://arxiv.org/abs/1812.00332" target="_blank" rel="noopener">Paper 🔗</a></p>
-<h2 id="ProxylessNAS-lt-br-gt"><a href="#ProxylessNAS-lt-br-gt" class="headerlink" title="ProxylessNAS &lt;/br&gt;"></a>ProxylessNAS &lt;/br&gt;</h2><p>这篇文章主要解决NAS代理机制下无法搜索到全局最优的问题，改进搜索策略，一定程度上解决资源消耗的问题。&lt;/br&gt;</p>
+<h2 id="ProxylessNAS"><a href="#ProxylessNAS" class="headerlink" title="ProxylessNAS"></a>ProxylessNAS</h2><p>这篇文章主要解决NAS代理机制下无法搜索到全局最优的问题，改进搜索策略，一定程度上解决资源消耗的问题。</p>
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这篇文章是基于DARTs改的，谈谈DARTs的一些问题：</p>
 <ul>
 <li>只搜索cell，然后不断的堆叠起来，实际上只要网络堆叠的够深，性能并不会太差</li>
@@ -375,16 +375,16 @@
 <li>并没有向Darts一样对整个Net上训练，而是利用采样来实现路径的选择</li>
 </ul>
 <h3 id="具体内容"><a href="#具体内容" class="headerlink" title="具体内容"></a>具体内容</h3><ul>
-<li>如何直接搜索整个Net？<br><br>论文引入了Gate的概念，门在op的后面，控制路线的通断，而门的选取概率和它的结构参数有关<script type="math/tex; mode=display">g = binarize(p_1,...,P_N) = \begin{cases} [1,0,...,0]\ with\ probability\ p_1\\
+<li>如何直接搜索整个Net？<br>论文引入了Gate的概念，门在op的后面，控制路线的通断，而门的选取概率和它的结构参数有关<script type="math/tex; mode=display">g = binarize(p_1,...,P_N) = \begin{cases} [1,0,...,0]\ with\ probability\ p_1\\
 \quad\ \  ... \\
 [0,0,...,1]\ with\ probability\ p_N\\
-\end{cases}</script>其中 $p<em>i = \frac{exp(\alpha_i)}{\sum</em>{k}exp(\alpha_k)}$，这个操作和DARTs不同，DARTs的做法是直接把所有可能的OP用Softmax处理后全部加进来，然后综合考虑。&lt;/br&gt;而ProxylessNAS则是按照$p_i$的概率对op进行一个选取。<script type="math/tex; mode=display">m_{darts} = \sum_{i=1}^{N}p_i\ o_i(x),\quad m_{proxyless} = \sum_{i=1}^{N}g_i\ o_i(x) = o_i(x)\ with\ probability\ p_i</script>这种采样机制似乎是更合理的，选取的结构直接拿去训练，搜索。&lt;/br&gt;</li>
-<li>梯度回传？<br><br>由于这种采样机制不会显示的包含他的结构参数（而DARTs是包含的，所以他可以直接用求导进行梯度回传），所以他在这里门的选取概率才会与结构参数相关联，这样在求导的时候才可以隐式的回传回去。<br>在这里ProxylessNAS用之前的<a href="https://arxiv.org/pdf/1511.00363.pdf" target="_blank" rel="noopener">BinaryConnect</a>的梯度回传处理方法。其实在这里，你可以认为他们把binaryConnect之前在CNN内部的操作，放大到对Network PATH上，实际上一些操作也是从CNN的内部结构中借鉴过来的，比如，DropPATH 对应 DropOut。或许ReLU也可以借鉴在NAS上，或者其他的一些idea。<br><script type="math/tex">\frac{\partial L}{\partial \alpha_i} = \sum_{j=1}^{N}\frac{\partial L}{\partial p_j}\frac{\partial p_j}{\partial \alpha_i} \approx \sum_{j=1}^{N}\frac{\partial L}{\partial g_j}\frac{\partial p_j}{\partial \alpha_i} = \sum_{j=1}^{N}\frac{\partial L}{\partial g_j}\frac{\partial \frac{exp(\alpha_j)}{\sum_{k}exp(\alpha_k)}}{\partial \alpha_i} = \sum_{j=1}^{N}\frac{\partial L}{\partial g_j}p_j(\delta_{ij}-p_i)</script> 其中 $\delta<em>{ij} = 1$ if $i=j$ and $\delta</em>{ij} = 0$ if $i\neq j$<br>这样看起来就可以进行求导了，但是每次对一个操作进行求导仍然需要对剩余其他的操作求偏导。计算量还是不小，作者提出了一个想法来解决这个问题，选择一个网络一定是因为它比其他的网络更优秀。作者只采样两条路径，然后对两条路径进行梯度回传。我的理解，假设选取的路径是A与B，如果A比B在网络更重要相对应的梯度回传给他的就越大，与此同时他选取到的概率就越大。&lt;/br&gt;在某种意义上，网络会偏向于采样结构参数大的网路，意味着这些网络也更容易得到训练。类比就是，穷人越来越穷，富人越来越富，然后最终的网络选取最富的那一条。如果只选取一条路径，这样没办法在比较中差异化网络，选取两条应该是在计算消耗以及精确度之间的一个Trade-off.&lt;/br&gt;</li>
-<li>详细的训练过程。&lt;/br&gt;<br>step1: 初始化各项参数（网络参数指CNN的卷积参数，结构参数指各个op的选择系数）&lt;/br&gt;<br>step2: 固定结构参数，与此同时对路径随机采样（选取gate），然后训练网络参数。&lt;/br&gt;<br>step3: 固定网络参数，按照上述的方法来采样两条路径，对结构参数进行更新。&lt;/br&gt;<br>循环2，3直到网络收敛或迭代固定次数，出现差异化大的网络，在每一步选取结构参数最大的op&lt;/br&gt;</li>
-<li>加入硬件化的指标&lt;/br&gt;<br>对硬件Latency进行建模，对每个op的latency进行预测，乘上他们的相应的结构参数然后加入到loss中，做一个Trade-off。</li>
-<li>方法对比&lt;/br&gt;<br>对比强化学习的方式对网络的结构参数进行更新。前面都是不变的，只不过在如何让目标函数与结构参数的联系方式不同。&lt;/br&gt;<br>我对reinforce机制下的更新不是特别熟悉，暂时没办法把这一块说的特别清楚。（留个坑更新吧）&lt;/br&gt;</li>
-<li>结果&lt;/br&gt;<br>那肯定是好的。对比了Proxyless-G，以及Proxyless-R；而且在移动端，CPU，GPU都测试了延时。并且发现了一些网络设计的启发。原作者在知乎上回答这方面的内容。<a href="https://www.zhihu.com/question/296404213/answer/547163236" target="_blank" rel="noopener">移步🔗</a><br>&lt;/br&gt;</li>
-<li>观点&lt;/br&gt;<br>这种二值连接比较好玩，简化计算也比较有意思。<br>但是这种结构不会搜索多元的连接方式，不会出现像ResNet以及Inception的类似结构。</li>
+\end{cases}</script>其中 <script type="math/tex">p_i = \frac{exp(\alpha_i)}{\sum_{k}exp(\alpha_k)}</script>，这个操作和DARTs不同，DARTs的做法是直接把所有可能的OP用Softmax处理后全部加进来，然后综合考虑。<br>而ProxylessNAS则是按照$p_i$的概率对op进行一个选取。<script type="math/tex; mode=display">m_{darts} = \sum_{i=1}^{N}p_i\ o_i(x),\quad m_{proxyless} = \sum_{i=1}^{N}g_i\ o_i(x) = o_i(x)\ with\ probability\ p_i</script>这种采样机制似乎是更合理的，选取的结构直接拿去训练，搜索。</li>
+<li>梯度回传？<br>由于这种采样机制不会显示的包含他的结构参数（而DARTs是包含的，所以他可以直接用求导进行梯度回传），所以他在这里门的选取概率才会与结构参数相关联，这样在求导的时候才可以隐式的回传回去。<br>在这里ProxylessNAS用之前的<a href="https://arxiv.org/pdf/1511.00363.pdf" target="_blank" rel="noopener">BinaryConnect</a>的梯度回传处理方法。其实在这里，你可以认为他们把binaryConnect之前在CNN内部的操作，放大到对Network PATH上，实际上一些操作也是从CNN的内部结构中借鉴过来的，比如，DropPATH 对应 DropOut。或许ReLU也可以借鉴在NAS上，或者其他的一些idea。 <script type="math/tex; mode=display">\frac{\partial L}{\partial \alpha_i} = \sum_{j=1}^{N}\frac{\partial L}{\partial p_j}\frac{\partial p_j}{\partial \alpha_i} \approx \sum_{j=1}^{N}\frac{\partial L}{\partial g_j}\frac{\partial p_j}{\partial \alpha_i} = \sum_{j=1}^{N}\frac{\partial L}{\partial g_j}\frac{\partial \frac{exp(\alpha_j)}{\sum_{k}exp(\alpha_k)}}{\partial \alpha_i} = \sum_{j=1}^{N}\frac{\partial L}{\partial g_j}p_j(\delta_{ij}-p_i)</script>其中 <script type="math/tex">\delta_{ij}=1</script> if <script type="math/tex">i=j</script> and <script type="math/tex">\delta_{ij} = 0</script> if <script type="math/tex">i\neq j</script><br>这样看起来就可以进行求导了，但是每次对一个操作进行求导仍然需要对剩余其他的操作求偏导。计算量还是不小，作者提出了一个想法来解决这个问题，选择一个网络一定是因为它比其他的网络更优秀。作者只采样两条路径，然后对两条路径进行梯度回传。我的理解，假设选取的路径是A与B，如果A比B在网络更重要相对应的梯度回传给他的就越大，与此同时他选取到的概率就越大。<br>在某种意义上，网络会偏向于采样结构参数大的网路，意味着这些网络也更容易得到训练。类比就是，穷人越来越穷，富人越来越富，然后最终的网络选取最富的那一条。如果只选取一条路径，这样没办法在比较中差异化网络，选取两条应该是在计算消耗以及精确度之间的一个Trade-off.</li>
+<li>详细的训练过程。<br>step1: 初始化各项参数（网络参数指CNN的卷积参数，结构参数指各个op的选择系数）<br>step2: 固定结构参数，与此同时对路径随机采样（选取gate），然后训练网络参数。<br>step3: 固定网络参数，按照上述的方法来采样两条路径，对结构参数进行更新。<br>循环2，3直到网络收敛或迭代固定次数，出现差异化大的网络，在每一步选取结构参数最大的op</li>
+<li>加入硬件化的指标<br>对硬件Latency进行建模，对每个op的latency进行预测，乘上他们的相应的结构参数然后加入到loss中，做一个Trade-off。</li>
+<li>方法对比<br>对比强化学习的方式对网络的结构参数进行更新。前面都是不变的，只不过在如何让目标函数与结构参数的联系方式不同。<br>我对reinforce机制下的更新不是特别熟悉，暂时没办法把这一块说的特别清楚。（留个坑更新吧）</li>
+<li>结果<br>那肯定是好的。对比了Proxyless-G，以及Proxyless-R；而且在移动端，CPU，GPU都测试了延时。并且发现了一些网络设计的启发。原作者在知乎上回答这方面的内容。<a href="https://www.zhihu.com/question/296404213/answer/547163236" target="_blank" rel="noopener">移步🔗</a></li>
+<li>观点<br>这种二值连接比较好玩，简化计算也比较有意思。<br>但是这种结构不会搜索多元的连接方式，不会出现像ResNet以及Inception的类似结构。</li>
 </ul>
 
       
@@ -558,7 +558,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#论文笔记"><span class="nav-number">1.</span> <span class="nav-text">论文笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ProxylessNAS-lt-br-gt"><span class="nav-number">1.1.</span> <span class="nav-text">ProxylessNAS &lt;/br&gt;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#具体内容"><span class="nav-number">1.1.2.</span> <span class="nav-text">具体内容</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#论文笔记"><span class="nav-number">1.</span> <span class="nav-text">论文笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ProxylessNAS"><span class="nav-number">1.1.</span> <span class="nav-text">ProxylessNAS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#具体内容"><span class="nav-number">1.1.2.</span> <span class="nav-text">具体内容</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
@@ -685,7 +685,7 @@
   
 
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
 
 
 
@@ -731,6 +731,28 @@
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
 
   
 
