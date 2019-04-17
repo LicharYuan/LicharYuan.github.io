@@ -364,34 +364,20 @@
       
         
           
-            <h1 id="论文笔记"><a href="#论文笔记" class="headerlink" title="论文笔记"></a>论文笔记</h1><p><a href="https://arxiv.org/abs/1812.00332" target="_blank" rel="noopener">Paper 🔗</a></p>
-<h2 id="ProxylessNAS"><a href="#ProxylessNAS" class="headerlink" title="ProxylessNAS"></a>ProxylessNAS</h2><p>这篇文章主要解决NAS代理机制下无法搜索到全局最优的问题，改进搜索策略，一定程度上解决资源消耗的问题。</p>
-<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这篇文章是基于DARTs改的，谈谈DARTs的一些问题：</p>
-<ul>
-<li>只搜索cell，然后不断的堆叠起来，实际上只要网络堆叠的够深，性能并不会太差</li>
-<li>一些operation的结构参数非常接近，比如两个op的结构参数分别是20.2%，20.1%，似乎选择20.2%和20.1% 并没有太大的差别</li>
-<li>一开始是在整个Net上进行训练，但是选取的时候只是选择一个子网络，中间可能会出现一些问题</li>
-</ul>
-<p>** 以上是自己总结下来的，文章中的前言部分请移步<a href="https://arxiv.org/abs/1812.00332" target="_blank" rel="noopener">原论文</a></p>
-<p>那么ProxylessNAS做了什么？</p>
-<ul>
-<li>直接搜索整个Net，并不需要堆叠cell来实现</li>
-<li>并没有向Darts一样对整个Net上训练，而是利用采样来实现路径的选择</li>
-</ul>
-<h3 id="具体内容"><a href="#具体内容" class="headerlink" title="具体内容"></a>具体内容</h3><ul>
-<li>如何直接搜索整个Net？<br>论文引入了Gate的概念，门在op的后面，控制路线的通断，而门的选取概率和它的结构参数有关<script type="math/tex; mode=display">g = binarize(p_1,...,P_N) = \begin{cases} [1,0,...,0]\ with\ probability\ p_1\\
-\quad\ \  ... \\
-[0,0,...,1]\ with\ probability\ p_N\\
-\end{cases}</script>其中 <script type="math/tex">p_i = \frac{exp(\alpha_i)}{\sum_{k}exp(\alpha_k)}</script>，这个操作和DARTs不同，DARTs的做法是直接把所有可能的OP用Softmax处理后全部加进来，然后综合考虑。<br>而ProxylessNAS则是按照$p_i$的概率对op进行一个选取。<script type="math/tex; mode=display">m_{darts} = \sum_{i=1}^{N}p_i\ o_i(x),\quad m_{proxyless} = \sum_{i=1}^{N}g_i\ o_i(x) = o_i(x)\ with\ probability\ p_i</script>这种采样机制似乎是更合理的，选取的结构直接拿去训练，搜索。</li>
-<li>梯度回传？<br>由于这种采样机制不会显示的包含他的结构参数（而DARTs是包含的，所以他可以直接用求导进行梯度回传），所以他在这里门的选取概率才会与结构参数相关联，这样在求导的时候才可以隐式的回传回去。<br>在这里ProxylessNAS用之前的<a href="https://arxiv.org/pdf/1511.00363.pdf" target="_blank" rel="noopener">BinaryConnect</a>的梯度回传处理方法。其实在这里，你可以认为他们把binaryConnect之前在CNN内部的操作，放大到对Network PATH上，实际上一些操作也是从CNN的内部结构中借鉴过来的，比如，DropPATH 对应 DropOut。或许ReLU也可以借鉴在NAS上，或者其他的一些idea。 <script type="math/tex; mode=display">\frac{\partial L}{\partial \alpha_i} = \sum_{j=1}^{N}\frac{\partial L}{\partial p_j}\frac{\partial p_j}{\partial \alpha_i} \approx \sum_{j=1}^{N}\frac{\partial L}{\partial g_j}\frac{\partial p_j}{\partial \alpha_i} = \sum_{j=1}^{N}\frac{\partial L}{\partial g_j}\frac{\partial \frac{exp(\alpha_j)}{\sum_{k}exp(\alpha_k)}}{\partial \alpha_i} = \sum_{j=1}^{N}\frac{\partial L}{\partial g_j}p_j(\delta_{ij}-p_i)</script>其中 <script type="math/tex">\delta_{ij}=1</script> if <script type="math/tex">i=j</script> and <script type="math/tex">\delta_{ij} = 0</script> if <script type="math/tex">i\neq j</script><br>这样看起来就可以进行求导了，但是每次对一个操作进行求导仍然需要对剩余其他的操作求偏导。计算量还是不小，作者提出了一个想法来解决这个问题，选择一个网络一定是因为它比其他的网络更优秀。作者只采样两条路径，然后对两条路径进行梯度回传。我的理解，假设选取的路径是A与B，如果A比B在网络更重要相对应的梯度回传给他的就越大，与此同时他选取到的概率就越大。<br>在某种意义上，网络会偏向于采样结构参数大的网路，意味着这些网络也更容易得到训练。类比就是，穷人越来越穷，富人越来越富，然后最终的网络选取最富的那一条。如果只选取一条路径，这样没办法在比较中差异化网络，选取两条应该是在计算消耗以及精确度之间的一个Trade-off.</li>
-<li>详细的训练过程。<br>step1: 初始化各项参数（网络参数指CNN的卷积参数，结构参数指各个op的选择系数）<br>step2: 固定结构参数，与此同时对路径随机采样（选取gate），然后训练网络参数。<br>step3: 固定网络参数，按照上述的方法来采样两条路径，对结构参数进行更新。<br>循环2，3直到网络收敛或迭代固定次数，出现差异化大的网络，在每一步选取结构参数最大的op</li>
-<li>加入硬件化的指标<br>对硬件Latency进行建模，对每个op的latency进行预测，乘上他们的相应的结构参数然后加入到loss中，做一个Trade-off。</li>
-<li>方法对比<br>对比强化学习的方式对网络的结构参数进行更新。前面都是不变的，只不过在如何让目标函数与结构参数的联系方式不同。<br>我对reinforce机制下的更新不是特别熟悉，暂时没办法把这一块说的特别清楚。（留个坑更新吧）</li>
-<li>结果<br>那肯定是好的。对比了Proxyless-G，以及Proxyless-R；而且在移动端，CPU，GPU都测试了延时。并且发现了一些网络设计的启发。原作者在知乎上回答这方面的内容。<a href="https://www.zhihu.com/question/296404213/answer/547163236" target="_blank" rel="noopener">移步🔗</a></li>
-<li>观点<br>这种二值连接比较好玩，简化计算也比较有意思。<br>但是这种结构不会搜索多元的连接方式，不会出现像ResNet以及Inception的类似结构。</li>
-</ul>
+          论文笔记Paper 🔗
+ProxylessNAS这篇文章主要解决NAS代理机制下无法搜索到全局最优的问题，改进搜索策略，一定程度上解决资源消耗的问题。
+前言这篇文章是基于DARTs改的，谈谈DARTs的一些问题：
 
-          
+只搜索cell，然后不断的堆叠起来，实际上只要网络堆叠的够深，性能并不会太差
+一些
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/04/17/ProxylessNAS论文笔记/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -509,15 +495,17 @@
       
         
           
-            <h1 id="每周leetcode（3）"><a href="#每周leetcode（3）" class="headerlink" title="每周leetcode（3）"></a>每周leetcode（3）</h1><h2 id="477-Total-Hamming-Distance"><a href="#477-Total-Hamming-Distance" class="headerlink" title="477 Total Hamming Distance"></a>477 Total Hamming Distance</h2><p><strong>Description</strong></p>
-<blockquote>
-<p>The Hamming distance between two integers is the number of positions at which the corresponding bits are different.&lt;/br&gt;<br>Now your job is to find the total Hamming distance between all pairs of the given numbers.&lt;/br&gt;<br>Example:&lt;/br&gt;<br>Input: 4, 14, 2&lt;/br&gt;<br>Output: 6&lt;/br&gt;</p>
-<p>Explanation: In binary representation, the 4 is 0100, 14 is 1110, and 2 is 0010 (just<br>showing the four bits relevant in this case). So the answer will be:&lt;/br&gt;<br>HammingDistance(4, 14) + HammingDistance(4, 2) + HammingDistance(14, 2) = 2 </p>
-</blockquote>
-<p><strong>思路</strong><br>如果用组合的方法也能做，但是复杂度太高了，现在拆解一下这个问题&lt;/br&gt;<br>4   &nbsp; 0100 &lt;/br&gt;<br>2   &nbsp; 0010 &lt;/br&gt;<br>14  1110 &lt;/br&gt;<br>第一位大家都是0，没有不同；第二位，一个0，两个1，那么比较的话，会出现2次不同；第三位，两个1，一个0，2次不同；第四位，两个0，一个1，两次不同。最后有6次不同。&lt;/br&gt;<br>以此类推到32bits&lt;/br&gt;<br><strong>Submission</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class Solution(object):</span><br><span class="line">    def totalHammingDistance(self, nums):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :type nums: List[int]</span><br><span class="line">        :rtype: int</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        res=0</span><br><span class="line">        for i in range(32):</span><br><span class="line">            count_one=0</span><br><span class="line">            for num in nums:</span><br><span class="line">                count_one+=(num&gt;&gt;i)&amp;1</span><br><span class="line">            count_zero=len(nums)-count_one</span><br><span class="line">            count_mul=count_one*count_zero</span><br><span class="line">            res+=count_mul</span><br><span class="line">        return res</span><br></pre></td></tr></table></figure>
+          每周leetcode（3）477 Total Hamming DistanceDescription
 
-          
+The Hamming distance between two integers is the number of positions at which the corresponding bi
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/10/18/leetcode-3/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -657,8 +645,15 @@
       
         
           
-            <h1 id="每周Leetcode-2"><a href="#每周Leetcode-2" class="headerlink" title="每周Leetcode(2)"></a>每周Leetcode(2)</h1><h2 id=""><a href="#" class="headerlink" title=" "></a> </h2>
+          每周Leetcode(2) 
           
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/09/11/Leetcode-2/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -798,79 +793,19 @@
       
         
           
-            <h1 id="每周Leetcode-1"><a href="#每周Leetcode-1" class="headerlink" title="每周Leetcode(1)"></a>每周Leetcode(1)</h1><h2 id="344-Reverse-String"><a href="#344-Reverse-String" class="headerlink" title="344 Reverse String"></a>344 Reverse String</h2><p><strong>Description</strong></p>
-<blockquote>
-<p>Write a function that takes a string as input and returns the string reversed.</p>
-<p>Example 1:</p>
-<p>Input: “hello”<br>Output: “olleh”<br>Example 2:</p>
-<p>Input: “A man, a plan, a canal: Panama”<br>Output: “amanaP :lanac a ,nalp a ,nam A”</p>
-</blockquote>
-<p><strong>Submission</strong></p>
-<ul>
-<li>Python 有非常简单的方式可以将字符串反转</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">class Solution(object):</span><br><span class="line">    def reverseString(self, s):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :type s: str</span><br><span class="line">        :rtype: str</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        return s[::-1]</span><br></pre></td></tr></table></figure>
-<ul>
-<li>用递归的思想</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class Solution(object):</span><br><span class="line">    def reverseString(self, s):</span><br><span class="line">        l = len(s)</span><br><span class="line">        if l &lt; 2:</span><br><span class="line">            return s</span><br><span class="line">        return self.reverseString(s[l/2:]) + self.reverseString(s[:l/2])</span><br></pre></td></tr></table></figure>
-<ul>
-<li>用列表的想法</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class Solution(object):</span><br><span class="line">    def reverseString(self, s):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :type s: str</span><br><span class="line">        :rtype: str</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        s_list=list(s)</span><br><span class="line">        length=len(s_list)</span><br><span class="line">        j=length-1</span><br><span class="line">        for i in range(length):</span><br><span class="line">            if i&lt;j:</span><br><span class="line">                s_list[i],s_list[j]=s_list[j],s_list[i]</span><br><span class="line">                j-=1</span><br><span class="line">        return &apos;&apos;.join(list(s_list))</span><br></pre></td></tr></table></figure>
-<h2 id="277-Basic-Calculator-II"><a href="#277-Basic-Calculator-II" class="headerlink" title="277 Basic Calculator II"></a>277 Basic Calculator II</h2><p><strong>Description</strong></p>
-<blockquote>
-<p>Implement a basic calculator to evaluate a simple expression string.</p>
-<p>The expression string contains only non-negative integers, +, -, *, / operators and empty spaces . The integer division should truncate toward zero.</p>
-<p>Example 1:</p>
-<p>Input: “3+2*2”<br>Output: 7<br>Example 2:</p>
-<p>Input: “ 3/2 “<br>Output: 1<br>Example 3:</p>
-<p>Input: “ 3+5 / 2 “<br>Output: 5</p>
-<p> Note:</p>
-<p> You may assume that the given expression is always valid.</p>
-<p> Do not use the eval built-in library function.</p>
-</blockquote>
-<p><strong>Submission</strong></p>
-<p>想法：先读取数字，用op保存该数字前面的符号；是加减就直接加入列表，是乘除，就和之间的数字做运算，把列表最后一个数字弹出做运算，然后把结果加入列表，最后把列表做一个求和。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">class Solution(object):</span><br><span class="line">    def calculate(self,s):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :type s: str</span><br><span class="line">        :rtype: int</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        res = []</span><br><span class="line">        op = &apos;+&apos;</span><br><span class="line">        num = 0</span><br><span class="line">        s += &apos;+&apos;</span><br><span class="line">        # opOrder = &#123;&quot;+&quot;: 1, &quot;-&quot;: 1, &quot;*&quot;: 2, &quot;/&quot;: 2&#125;</span><br><span class="line">        for char in s:</span><br><span class="line">            if ord(&apos;0&apos;) &lt;= ord(char) and ord(char) &lt;= ord(&apos;9&apos;):</span><br><span class="line">                num = num * 10 + ord(char) - ord(&apos;0&apos;)</span><br><span class="line">                # print(num)</span><br><span class="line">                # print(char)</span><br><span class="line">            else:</span><br><span class="line">                if char != &apos;&apos;:</span><br><span class="line">                    if op == &apos;+&apos;:</span><br><span class="line">                        res.append(num)</span><br><span class="line">                    elif op == &apos;-&apos;:</span><br><span class="line">                        res.append(-num)</span><br><span class="line">                    elif op == &apos;*&apos;:</span><br><span class="line">                        res.append(res.pop() * num)</span><br><span class="line">                    elif op ==r&apos;/&apos;:</span><br><span class="line">                        last = res.pop()</span><br><span class="line">                        if last &lt; 0:</span><br><span class="line">                            res = -(-last//num)</span><br><span class="line">                        else:</span><br><span class="line">                            res = last//num</span><br><span class="line">                        res.append(res)</span><br><span class="line">                op = char</span><br><span class="line">                num = 0</span><br><span class="line">        # print(res)</span><br><span class="line">        return sum(res)</span><br></pre></td></tr></table></figure>
-<h2 id="17-Letter-Combinations-of-a-Phone-Number"><a href="#17-Letter-Combinations-of-a-Phone-Number" class="headerlink" title="17 Letter Combinations of a Phone Number"></a>17 Letter Combinations of a Phone Number</h2><p><strong>Description</strong></p>
-<blockquote>
-<p>Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.</p>
-<p>A mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.</p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Telephone-keypad2.svg/200px-Telephone-keypad2.svg.png" alt=""></p>
-<p>Example:</p>
-<p>Input: “23”<br>Output: [“ad”, “ae”, “af”, “bd”, “be”, “bf”, “cd”, “ce”, “cf”].</p>
-<p>Note:<br>Although the above answer is in lexicographical order, your answer could be in any order you want.</p>
-</blockquote>
-<p><strong>Submission</strong></p>
-<ul>
-<li>递归的想法</li>
-</ul>
-<p>先用字典储存数据；然后递归；<br>举个例子，‘345’，[d]-&gt;[g,h,i]结合 然后 结果再和 [j,k,l]结合，然后字母长度等于原来数字长度的时候把结合的结果给加到结果上。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">class Solution(object):</span><br><span class="line">    def letterCombinations(self, digits):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :type digits: str</span><br><span class="line">        :rtype: List[str]</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        if len(digits)==0:</span><br><span class="line">            return []</span><br><span class="line">        num_dict = &#123;&quot;1&quot;: [], &quot;2&quot;: [&apos;a&apos;, &apos;b&apos;, &apos;c&apos;], &quot;3&quot;: [&apos;d&apos;, &apos;e&apos;, &apos;f&apos;], &quot;4&quot;: [&apos;g&apos;, &apos;h&apos;, &apos;i&apos;], &quot;5&quot;: [&apos;j&apos;, &apos;k&apos;, &apos;l&apos;],</span><br><span class="line">                &quot;6&quot;: [&apos;m&apos;, &apos;n&apos;, &apos;o&apos;],&quot;7&quot;: [&apos;p&apos;, &apos;q&apos;, &apos;r&apos;, &apos;s&apos;], &quot;8&quot;: [&apos;t&apos;, &apos;u&apos;, &apos;v&apos;], &quot;9&quot;: [&apos;w&apos;, &apos;x&apos;, &apos;y&apos;, &apos;z&apos;]&#125;</span><br><span class="line">        def combineList(num,string,res):</span><br><span class="line">            if num== len(digits):</span><br><span class="line">                res.append(string)</span><br><span class="line">                return #没有这个return num 会一直加导致引索出范围</span><br><span class="line">            for letter in num_dict[digits[num]]:</span><br><span class="line">                print(num_dict[digits[num]])</span><br><span class="line">                combineList(num+1,string+letter,res)</span><br><span class="line">        res=[]</span><br><span class="line">        combineList(0,&quot;&quot;,res)</span><br><span class="line">        return res</span><br></pre></td></tr></table></figure>
-<ul>
-<li>用字符串拼接的想法</li>
-</ul>
-<p>还是‘345’这个例子,首先拿到‘3’的代表字符串的列表:[d,e,f]存入结果res中;对下一个数字的字母进行拼接，对于’4’,先拿到其对应的第一个字母g，和之前的结果res做一个拼接存入new_res中[dg,eg,fg],然后拿到第二个字母h，此时res还是之前的[d,e,f]然后和之前的操作一样，操作完数字4就进行下一个数字操作，循环到最后一个数字退出循环。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">class Solution2(object):</span><br><span class="line"></span><br><span class="line">    def letterCombinations(self, digits):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :type digits: str</span><br><span class="line">        :rtype: List[str]</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        if not digits:</span><br><span class="line">            return []</span><br><span class="line"></span><br><span class="line">        digit_string_map = &#123;&apos;2&apos;: &apos;abc&apos;, &apos;3&apos;: &apos;def&apos;, &apos;4&apos;: &apos;ghi&apos;, &apos;5&apos;: &apos;jkl&apos;, &apos;6&apos;: &apos;mno&apos;, &apos;7&apos;: &apos;pqrs&apos;, &apos;8&apos;: &apos;tuv&apos;,</span><br><span class="line">                            &apos;9&apos;: &apos;wxyz&apos;&#125;</span><br><span class="line"></span><br><span class="line">        res = [&quot;&quot;]</span><br><span class="line">        for digit in digits:</span><br><span class="line">            new_res = []</span><br><span class="line">            for ch in digit_string_map[digit]:</span><br><span class="line">                print(ch)</span><br><span class="line">                new_res.extend([ele + ch for ele in res])</span><br><span class="line">                print(new_res)</span><br><span class="line">                print(res)</span><br><span class="line">            res = new_res</span><br><span class="line">        return res</span><br></pre></td></tr></table></figure>
-<h2 id="567-Permutation-in-String"><a href="#567-Permutation-in-String" class="headerlink" title="567 Permutation in String"></a>567 Permutation in String</h2><p><strong>Description</strong></p>
-<blockquote>
-<p>Given two strings s1 and s2, write a function to return true if s2 contains the permutation of s1. In other words, one of the first string’s permutations is the substring of the second string.</p>
-<p>Example 1:<br>Input:s1 = “ab” s2 = “eidbaooo”<br>Output:True<br>Explanation: s2 contains one permutation of s1 (“ba”).</p>
-<p>Example 2:<br>Input:s1= “ab” s2 = “eidboaoo”<br>Output: False</p>
-<p>Note:<br>The input strings only contain lower case letters.<br>The length of both given strings is in range [1, 10,000].</p>
-</blockquote>
-<p><strong>Submission</strong></p>
-<ul>
-<li>用划窗的想法</li>
-</ul>
-<p>对于s1:abc 先转换为[0,1,2],然后用一个划窗来表示</p>
-<p>[a,b,c] -&gt; </p>
-<p>[1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]</p>
-<p>对于s2:eidbacooo, 以长度3来对这个字符进行检索，每个窗口中的字母也有长度为26的列表来表示，直到这个窗口和目标相等则包含，否则不包含。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">class Solution(object):</span><br><span class="line">    def checkInclusion(self, s1, s2):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :type s1: str</span><br><span class="line">        :type s2: str</span><br><span class="line">        :rtype: bool</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        num1=[ord(x)-ord(&apos;a&apos;) for x in s1]</span><br><span class="line">        num2=[ord(x)-ord(&apos;a&apos;) for x in s2]</span><br><span class="line">        target=[0]*26</span><br><span class="line">        for num in num1:</span><br><span class="line">            target[num]+=1</span><br><span class="line">        window=[0]*26</span><br><span class="line">        for i,num in enumerate(num2):</span><br><span class="line">            window[num]+=1</span><br><span class="line">            index=i-len(num1)</span><br><span class="line">            if index&gt;=0:</span><br><span class="line">                window[num2[index]]-=1</span><br><span class="line">            if window==target:</span><br><span class="line">                return True</span><br><span class="line">        return False</span><br></pre></td></tr></table></figure>
+          每周Leetcode(1)344 Reverse StringDescription
 
-          
+Write a function that takes a string as input and returns the string reversed.
+Example 1:
+Input: “hello”Ou
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/09/03/Leetcode-1/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -988,8 +923,15 @@
       
         
           
-            <h1 id="迁移测试"><a href="#迁移测试" class="headerlink" title="迁移测试"></a>迁移测试</h1>
+          迁移测试
           
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/08/31/Test/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1129,20 +1071,16 @@
       
         
           
-            <h1 id="1-What-is-KNN"><a href="#1-What-is-KNN" class="headerlink" title="1.What is KNN ?"></a>1.What is KNN ?</h1><p>&emsp; &emsp;KNN 是一种基本的分类算法和回归算法，这里只介绍在分类上的应用。它采用测量特征值之间的距离进行分类。大白话就是：<strong>在特征空间，找到离给定A点距离最近的k个点，他们投票，人数最多的那个类就是A属于的那个类</strong>。这里的距离不一定是欧氏距离。</p>
-<h1 id="2-KNN-code"><a href="#2-KNN-code" class="headerlink" title="2.KNN code"></a>2.KNN code</h1><p>下面是KNN的python代码，这里我用了欧氏距离。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">classify0</span><span class="params">(inX,dataSet,labels,k)</span>:</span></span><br><span class="line">    dataSetSize=dataSet.shape[<span class="number">0</span>]</span><br><span class="line">    diffMat=np.tile(inX,(dataSetSize,<span class="number">1</span>))-dataSet</span><br><span class="line">    sqDiffMat=diffMat**<span class="number">2</span></span><br><span class="line">    sqDistances=sqDiffMat.sum(axis=<span class="number">1</span>)</span><br><span class="line">    distances=sqDistances**<span class="number">0.5</span></span><br><span class="line">    sortedDisIndicies=distances.argsort()</span><br><span class="line">    <span class="comment"># print(distances)</span></span><br><span class="line">    classCount=&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(k):</span><br><span class="line">        <span class="comment"># print(sortedDisIndicies[i])</span></span><br><span class="line">        voteIlabel=labels[sortedDisIndicies[i]]</span><br><span class="line">        <span class="comment"># print('voteIlabel:',voteIlabel)</span></span><br><span class="line">        classCount[voteIlabel]=classCount.get(voteIlabel,<span class="number">0</span>)+<span class="number">1</span></span><br><span class="line">        <span class="comment"># print('classCounrt:',classCount)</span></span><br><span class="line">    sortedClassCount=sorted(classCount.items(),key=operator.itemgetter(<span class="number">1</span>),reverse=<span class="keyword">True</span>)</span><br><span class="line">    <span class="keyword">return</span> sortedClassCount[<span class="number">0</span>][<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
-<p>该代码首先计算了和每个点的距离，然后选取距离前K的点，并给出这k个点的归类情况，哪类最多inX就判断为该类。</p>
-<p>这种计算其实效率非常低的，可以构造KD树来简化计算量。</p>
-<h1 id="3-MNIST数据集的读取"><a href="#3-MNIST数据集的读取" class="headerlink" title="3.MNIST数据集的读取"></a>3.MNIST数据集的读取</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> scipy.misc <span class="keyword">import</span> imsave</span><br><span class="line"><span class="keyword">import</span> matplotlib <span class="keyword">as</span> mpl</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_mnist</span><span class="params">(path,kind=<span class="string">'train'</span>)</span>:</span></span><br><span class="line">    <span class="comment">#kind 默认为train 选取t10k表示test</span></span><br><span class="line">    labels_path=os.path.join(path,<span class="string">'%s-labels.idx1-ubyte'</span>%kind)</span><br><span class="line">    images_path=os.path.join(path,<span class="string">'%s-images.idx3-ubyte'</span>%kind)</span><br><span class="line">    <span class="keyword">with</span> open(labels_path,<span class="string">'rb'</span>) <span class="keyword">as</span> lbpath:</span><br><span class="line">        magic,n=struct.unpack(<span class="string">'&gt;II'</span>,lbpath.read(<span class="number">8</span>))</span><br><span class="line">        <span class="comment">#如果没有上面的代码会读出60008个标签，很显然其他字节占位了</span></span><br><span class="line">        labels=np.fromfile(lbpath,dtype=np.uint8)</span><br><span class="line">        <span class="comment"># print(labels) #包含60000张训练图片</span></span><br><span class="line">    <span class="keyword">with</span> open(images_path,<span class="string">'rb'</span>) <span class="keyword">as</span> imgpath:</span><br><span class="line">        magic,num,rows,cols=struct.unpack(<span class="string">'&gt;IIII'</span>,imgpath.read(<span class="number">16</span>))</span><br><span class="line">        images=np.fromfile(imgpath,dtype=np.uint8).reshape(len(labels),<span class="number">784</span>)</span><br><span class="line">    <span class="comment">#images：[numbers,784],labels：[numbers]</span></span><br><span class="line">    <span class="keyword">return</span> images,labels</span><br></pre></td></tr></table></figure>
-<p>这里会用到struct模块，是python对字节类型的处理包。方法返回images和labels,可以再加入批量化的模块，方便交叉验证。</p>
-<p>读取后的MNIST数据可视化：<br><img src="https://i.imgur.com/vTfwcRd.png" alt=""></p>
-<h1 id="4-结果"><a href="#4-结果" class="headerlink" title="4.结果"></a>4.结果</h1><p>选取100个测试了一下，准确率在0.3，稍微比瞎蒙0.1好一点。</p>
-<p>这里有一点小问题，对数据做预处理像神经网络一样限制在[-1,1]后，精度有下降到0.14，猜测做预处理之后，小数点后的距离计算比较容易出错。</p>
-<p>完整代码在这：<a href="https://github.com/LicharYuan/AI_Net/tree/master/%E7%AE%97%E6%B3%95/knn" title="KNN的实现" target="_blank" rel="noopener">https://github.com/LicharYuan/AI_Net/tree/master/%E7%AE%97%E6%B3%95/knn</a></p>
-<p>更改相关文件的路径即可。</p>
-
-          
+          1.What is KNN ?&emsp; &emsp;KNN 是一种基本的分类算法和回归算法，这里只介绍在分类上的应用。它采用测量特征值之间的距离进行分类。大白话就是：在特征空间，找到离给定A点距离最近的k个点，他们投票，人数最多的那个类就是A属于的那个类。这里的距离不一定是欧氏距离。
+2.KNN
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/30/K近邻与MNIST手写数据集/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1260,46 +1198,19 @@
       
         
           
-            <h1 id="什么是自编码器"><a href="#什么是自编码器" class="headerlink" title="什么是自编码器?"></a>什么是自编码器?</h1><p>&emsp;&emsp;<strong>自编码器</strong>是一种无监督型神经网络，将输入“复制”到输出。一般可以分为编码-解码两个部分，这两个部分的结构可以是全连接层/卷积层/其他网络。其目的并不是复制输入，而是学习到输入的有用部分（相关特征）。</p>
-<h2 id="自编码器的变形"><a href="#自编码器的变形" class="headerlink" title="自编码器的变形"></a>自编码器的变形</h2><ul>
-<li>稀疏编码器 </li>
-</ul>
-<p>&emsp;&emsp;&emsp;在重构误差的基础上，引入编码层的的稀疏惩罚</p>
-<center>![](https://i.imgur.com/9oeb7m9.png)</center>
+          什么是自编码器?&emsp;&emsp;自编码器是一种无监督型神经网络，将输入“复制”到输出。一般可以分为编码-解码两个部分，这两个部分的结构可以是全连接层/卷积层/其他网络。其目的并不是复制输入，而是学习到输入的有用部分（相关特征）。
+自编码器的变形
+稀疏编码器 
 
-<p>&emsp;&emsp; 这个加入的稀疏诱导项推导可以参考[2]的稀疏编码，其作用是提取一些特殊的特征，我的理解是只响应基向量的某些成分忽略其他部分。</p>
-<ul>
-<li>去躁自编码器</li>
-</ul>
-<p>&emsp;&emsp;&emsp; 此编码器把目标做一个转换,&lt;/br&gt;<br>&emsp;&emsp;&emsp; 传统自编码器：<img src="https://i.imgur.com/IIdqYK5.png" alt=""><br>&emsp;&emsp;&emsp; 去躁自编码器：<img src="https://i.imgur.com/COyvAL6.png" alt=""><br>这部分书上写的很详细了。其实就是多设计了加入噪声的结构，训练解码部分对噪声的处理，再给一张带有噪声的图片，这个编码器就可以对图片的噪声信息做处理了。<br>&lt;/br&gt;当然还有很多种传统自编码器的变形，他们可以分为两种改变：对约束项处理（稀疏惩罚），对结构优化（变分）。</p>
-<h2 id="代码部分"><a href="#代码部分" class="headerlink" title="代码部分"></a>代码部分</h2><p>&emsp;&emsp;基于tensflow写了一个简单的AE的代码,自编码器的部分搭建非常简单：&lt;/br&gt;<br><strong>Encoder:</strong></p>
-<pre><code>def encoder(input):
-    layer_1=add_layer(input,weights[&#39;encoder_h1&#39;],biases[&#39;encoder_b1&#39;])
-    layer_2=add_layer(layer_1,weights[&#39;encoder_h2&#39;],biases[&#39;encoder_b2&#39;])
-    layer_3=add_layer(layer_2,weights[&#39;encoder_h3&#39;],biases[&#39;encoder_b3&#39;])
-    return layer_3
-</code></pre><p>&emsp;其中add_layer() 是一个添加全连接层的方法，可以换成卷积重写这个方法。</p>
-<pre><code>def add_layer(input,weight,bias):
-    return tf.nn.sigmoid(tf.add(tf.matmul(input,weight),bias))
-</code></pre><p><strong>Decoder:</strong></p>
-<pre><code>def decoder(input):
-    layer_1 = add_layer(input, weights[&#39;decoder_h1&#39;], biases[&#39;decoder_b1&#39;])
-    layer_2 = add_layer(layer_1, weights[&#39;decoder_h2&#39;], biases[&#39;decoder_b2&#39;])
-    layer_3 = add_layer(layer_2, weights[&#39;decoder_h3&#39;], biases[&#39;decoder_b3&#39;])
-    return layer_3
-</code></pre><p><strong>重构误差loss：</strong></p>
-<pre><code>loss=tf.reduce_mean(tf.pow(y_true-y_pred,2))
-</code></pre><p>&emsp;&emsp;网络最重要的部分已经搭建完成，剩下的就是data I/O，优化器的选择。<br>全部代码在这里可以看到：<a href="https://github.com/LicharYuan/AI_Net/blob/master/tf/AE_tf.py" target="_blank" rel="noopener">AE的tf代码</a>。最近在进行pytorch的学习，pytorch的AE代码<a href="https://github.com/LicharYuan/AI_Net/blob/master/py/AE_pt.py" target="_blank" rel="noopener">在这</a>。</p>
-<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>&lt;/br&gt;<br>迭代0次：</p>
-<p><img src="https://i.imgur.com/8Hip2Hl.png" alt=""></p>
-<p>迭代1000次：&lt;/br&gt;</p>
-<p><img src="https://i.imgur.com/NjsIwB4.png" alt=""><br>&lt;/br&gt;</p>
-<p>迭代9000次：&lt;/br&gt;</p>
-<p><img src="https://i.imgur.com/D6bTWtU.png" alt=""></p>
-<h2 id="多余的想法"><a href="#多余的想法" class="headerlink" title="多余的想法"></a>多余的想法</h2><p>&emsp;&emsp;更好的效果有变分自编码器，在编码-解码的结构上加入一层潜空间，潜空间的潜变量可以更好的拟合原始的分布，因为它加入了一些分布限制，理论推导可以看论文[3]，又有人结合流行的框架GANs (Generative adversarial nets)来达到更好的生成效果。<br>&emsp;&emsp;这里记录一个问题，AE/VAE也好生成模型如何控制属性，比如我现在就需要5这个数字，其他的都不需要，那么怎么在自编码器中加入这个限制，我知道可以做到自编码器只训练数字为5的图像，那么输出也是5。这样太麻烦，那我需要123，就需要训练三个自编码器。有没有办法把这些整合到一个自编码器中呢？后续论文看到再来补充。</p>
-<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p>[1]深度学习，第十四章，自编码器<br>[2]<a href="http://ufldl.stanford.edu/wiki/index.php/%E7%A8%80%E7%96%8F%E7%BC%96%E7%A0%81" target="_blank" rel="noopener">http://ufldl.stanford.edu/wiki/index.php/%E7%A8%80%E7%96%8F%E7%BC%96%E7%A0%81</a><br>[3]<a href="https://arxiv.org/abs/1606.05908" target="_blank" rel="noopener">https://arxiv.org/abs/1606.05908</a><br>[4]<a href="https://github.com/aymericdamien/TensorFlow-Examples" target="_blank" rel="noopener">https://github.com/aymericdamien/TensorFlow-Examples</a><br>[5]<a href="https://github.com/SherlockLiao/pytorch-beginner" target="_blank" rel="noopener">https://github.com/SherlockLiao/pytorch-beginner</a></p>
-
-          
+&emsp;&emsp;&em
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/13/自编码器学习笔记/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1439,10 +1350,17 @@
       
         
           
-            <p>第一次搭建博客。<br>这里是一个技术小白的修炼场，记录平常学习上遇到的问题。</p>
-<p>有缘路过，欢迎提问，指出不足。</p>
+          第一次搭建博客。这里是一个技术小白的修炼场，记录平常学习上遇到的问题。
+有缘路过，欢迎提问，指出不足。
 
           
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/12/Hello-Hexo/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
