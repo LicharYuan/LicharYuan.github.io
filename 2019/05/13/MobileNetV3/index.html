@@ -107,7 +107,7 @@
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/005BYqpggy1g30v8gnvhtj30v00h6wi3.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/005BYqpggy1g30v77tiyjj30us0e4dj9.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/005BYqpggy1g30v6h08g3j30k612swni.jpg">
-<meta property="og:updated_time" content="2019-05-14T12:13:42.962Z">
+<meta property="og:updated_time" content="2019-05-14T12:30:05.286Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Searching for MobileNetV3笔记">
 <meta name="twitter:description" content="Searching for MobileNetV3笔记arxiv 本笔记将回顾V1，V2的知识以及介绍V3的特点。  知识回顾 MobileNet V1 MobileNet V2   MobileNetV3 相关技术 文章    知识回顾MobileNet V1提出了depthwise的卷积结构加速CNN的训练，depthwise的操作就是将通道全部独立开做卷积期间通道数不变，可以理解为Group">
@@ -396,8 +396,8 @@
 <li>原先用的是32个3x3的卷积来构建初始滤波器的边缘检测。很多特征图都是彼此的镜像，所以V3砍掉了一半，用16个，参数少了也不用使用激活层了。</li>
 </ul>
 <h4 id="激活函数的设定"><a href="#激活函数的设定" class="headerlink" title="激活函数的设定"></a>激活函数的设定</h4><ul>
-<li><p>改进了swish的激活函数，swish虽然可以用来提高精度，但是带来的计算量太大的。V3提出了h-wish，来作为V3激活函数的一种。</p>
-<script type="math/tex; mode=display">swish \ \  x = x\ ·\ \sigma(x) => h-swish[x]\ = \ x\ \frac{ReLU6(x+3)}{6}</script><p>文章中对比这两种激活函数的曲线，两个是相近的。<br><img src="https://ws3.sinaimg.cn/large/005BYqpggy1g30v77tiyjj30us0e4dj9.jpg" alt="swish_vs_hswish"><br>实验发现，这种激活函数的改变在网络的深层能够更有效的减少网络的参数量。表格1和表格2列出了两种MobileNetV3所采用的结构。MobileNetV3的large和small分别对应高低资源消耗。</p>
+<li><p>改进了swish的激活函数，swish虽然可以用来提高精度，但是带来的计算量太大的。V3提出了h-wish，来作为V3激活函数的一种。<br>$swish \ \  x = x\ ·\ \sigma(x) =&gt; h-swish[x]\ = \ x\ \frac{ReLU6(x+3)}{6} $</p>
+<p>文章中对比这两种激活函数的曲线，两个是相近的。<br><img src="https://ws3.sinaimg.cn/large/005BYqpggy1g30v77tiyjj30us0e4dj9.jpg" alt="swish_vs_hswish"><br>实验发现，这种激活函数的改变在网络的深层能够更有效的减少网络的参数量。表格1和表格2列出了两种MobileNetV3所采用的结构。MobileNetV3的large和small分别对应高低资源消耗。</p>
 <p><img src="https://ws3.sinaimg.cn/large/005BYqpggy1g30v6h08g3j30k612swni.jpg" alt="MobileNetV3"></p>
 </li>
 </ul>
