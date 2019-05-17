@@ -104,10 +104,11 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/005BYqpggy1g30v53gehoj30w40pr3zg.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/005BYqpggy1g30v5tlbe0j30to0bkwh8.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/005BYqpggy1g322w8z6dbj310v0gdtcw.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/005BYqpggy1g30v8gnvhtj30v00h6wi3.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/005BYqpggy1g30v77tiyjj30us0e4dj9.jpg">
 <meta property="og:image" content="https://ws3.sinaimg.cn/large/005BYqpggy1g30v6h08g3j30k612swni.jpg">
-<meta property="og:updated_time" content="2019-05-15T07:01:14.927Z">
+<meta property="og:updated_time" content="2019-05-15T09:12:06.159Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Searching for MobileNetV3笔记">
 <meta name="twitter:description" content="Searching for MobileNetV3笔记arxiv 本笔记将回顾V1，V2的知识以及介绍V3的特点。  知识回顾 MobileNet V1 MobileNet V2   MobileNetV3 效果  相关技术 文章    知识回顾MobileNet V1提出了depthwise的卷积结构加速CNN的训练，depthwise的操作就是将通道全部独立开做卷积期间通道数不变，可以理解为G">
@@ -410,13 +411,16 @@
 <h3 id="相关技术"><a href="#相关技术" class="headerlink" title="相关技术"></a>相关技术</h3><h4 id="SENet🔗"><a href="#SENet🔗" class="headerlink" title="SENet🔗"></a>SENet<a href="https://arxiv.org/pdf/1709.01507.pdf" target="_blank" rel="noopener">🔗</a></h4><p>SENet中的Squeeze-and-Excite模块被加入到mobileNetV2中。<br>Squeeze-and-Excite模块结合特征通道的关系来加强网络的学习能力。除了这种方式外，常见的方法有Incepetion，结合不同尺度的特征信息，融合不同感受野的特征得到网络增益；ResNet的shortcut结构，结合不同level的特征图来增强网络。</p>
 <p>SE是在特征单独这一层做一个“门”的结构，让网络自动学习到每个特征通道的重要程度。而剩下的两种方法是在不同的特征上进行处理。</p>
 <p>画个简单的示意图来表示他们的差异：<br><img src="https://ws3.sinaimg.cn/large/005BYqpggy1g30v53gehoj30w40pr3zg.jpg" alt="对比"><br><strong>MobileNetV3 基于 MobileNetV2 的 Inverted Resdiual and Linear Bottleneck中加入SE的模块。下图所示</strong><br><img src="https://ws3.sinaimg.cn/large/005BYqpggy1g30v5tlbe0j30to0bkwh8.jpg" alt="V3_SE"></p>
-<h4 id="MnasNet🔗"><a href="#MnasNet🔗" class="headerlink" title="MnasNet🔗"></a>MnasNet<a href="https://arxiv.org/pdf/1807.11626v1.pdf" target="_blank" rel="noopener">🔗</a></h4><p>用RL的方法进行网络搜索，加上了准确率和实时延迟的tradeoff，并不是搜索出一个或几个cell然后重复堆叠成一个网络，而是简化每个cell的搜索空间但允许各个单元不同。代码原文中有链接，谷歌用TPU进行训练的，家里没矿也就不搜了吧。</p>
+<h4 id="MnasNet🔗"><a href="#MnasNet🔗" class="headerlink" title="MnasNet🔗"></a>MnasNet<a href="https://arxiv.org/pdf/1807.11626v1.pdf" target="_blank" rel="noopener">🔗</a></h4><p>用RL的方法进行网络搜索，加上了准确率和实时延迟的tradeoff，并不是搜索出一个或几个cell然后重复堆叠成一个网络，而是简化每个cell的搜索空间但允许各个单元不同（原文中称作 “ Factorized Hierarchical Search Space ”）。代码原文中有链接，谷歌用TPU进行训练的，家里没矿也就不搜了吧。</p>
 <p><strong>在MobileNetV3上，MnasNet的Reward没有对移动端的小型模型做优化。随着延时改变，小模型的精度改变会更加剧烈。所以需要调整MnasNet的参数设定（e.g. ACC(m) × [LAT(m)/TAR]w 中w，就是让延时的reward减少 其他参数没说要改）。搜索完成以后，然后再用一个NetAdapt算法来搜索每层的滤波数（或卷积核个数）以及其他优化方法（之后会讲）得到最终的MobileNetV3。</strong></p>
 <h4 id="NetAdapt🔗"><a href="#NetAdapt🔗" class="headerlink" title="NetAdapt🔗"></a>NetAdapt<a href="https://arxiv.org/pdf/1804.03230.pdf" target="_blank" rel="noopener">🔗</a></h4><p>这篇文章主要涉及了一个平台算法，可以把一些非直接的变量整合进来，比如延时和能源消耗。做法就是直接把模型放到目标平台上训练然后反馈回数据，再对网络进行调整，直到满足设定的条件，优化结束。原文中有算法流程图，给定一个K conv and FC layers的网络Net0，在每一步的结构更改中，需要减少一个给定个值deltaR，然后调整每层的卷积核数，生成一个Net_simp集合，在这个集合中找到最高准确率的网络。保持循环，直到资源消耗满足给定条件，然后finetune网络。文章中有一些快速资源消耗估计的方法，如果有需要可以去仔细看看。</p>
-<p><strong>在MobileNetV3中，基本用一样的方法得到符合latency下，精度最好的网络。有一些变动的地方在于，在符合latency衰减的Net集合中并不是选取精度最优的网络，而是选取 （精度变化/延时变化）大的网络，即希望拿到精度变化提升大延时变化小的网络（延时还是满足所给条件的）。得到最后的网络之后，再train from scratch。</strong> 对MobileNetV2，（觉得是笔误，应该是V3）减少latency的方法用了两种。一种是减少每个层的size，或者减少所有共享相同bottleneck size模块的bottleneck，仍然保持residual链接模式。</p>
+<p><strong>V3借鉴这篇文章的网络调整方法，对初始模型进行 “第一步的瘦身”。V3提供了两种网络修改方法，减少expansion layer的大小或者减少bottelneck的大小，他们分别是下图的红色和橙色的部分用这两种方法产生一系列延时下降 σ 的网络，快速的预估这些网络的精度， 得到本次延时下降精度最好的网络，作为进行下一步的延时下降的原始模型。不断下降直到满足延时目标。在MobileNetV3中，有一些变动的地方在于，在符合latency衰减的Net集合中并不是选取精度最优的网络，而是选取 （精度变化/延时变化）大的网络，即希望拿到精度变化提升大延时变化小的网络（延时还是满足所给条件的）。得到最后的网络之后，再train from scratch。</strong> 对MobileNetV2，（觉得是笔误，应该是V3）减少latency的方法用了两种，也就是说是基于这两种方法来产生网络。一种是减少expansion layer（就是用1x1 conv对通道数扩大的那一层）的size，或者减少所有共享相同bottleneck size模块的bottleneck（就是resiudal链接的那一个模块），仍然保持residual链接模式。也就是下图中红色和橙色对应的那两层，改变他们的大小。</p>
+<p><img src="https://ws3.sinaimg.cn/large/005BYqpggy1g322w8z6dbj310v0gdtcw.jpg" alt="Netadapt_2ways"></p>
 <h3 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h3><p>当然也有原创的一些方法，下面就是V3做的特定的优化。</p>
-<h4 id="重新设计计算密集层"><a href="#重新设计计算密集层" class="headerlink" title="重新设计计算密集层"></a>重新设计计算密集层</h4><ul>
-<li>在基于MobileNet V2的模型中inverted bottleneck structure and variants 是用1x1 conv来拓展到更高维的特征空间，这层带来了往外的latency。为了减少latency且保留高维特征，V3把1x1移动到平均池化之后。现在计算的分辨率由7x7变成了1x1，那么之前为了减少计算建立的瓶颈层也不需要了。改变前后的比较图：<img src="https://ws3.sinaimg.cn/large/005BYqpggy1g30v8gnvhtj30v00h6wi3.jpg" alt="V3_redesign"></li>
+<h4 id="重新设计计算密集层"><a href="#重新设计计算密集层" class="headerlink" title="重新设计计算密集层"></a>重新设计计算密集层</h4><p>设立重新设计原始模型后面的层<br>original Last stage: $ 7^2X160 -&gt; 7^2X960 -&gt; 7^2X960 -&gt; 7^2X320 -&gt; 7^2X1280 $</p>
+<p>重新设计后变为Efficient last stage:$ 7^2X160 -&gt; 7^2X960 -&gt; 1^2X960 -&gt; 1^2X1280 $</p>
+<ul>
+<li>在基于MobileNet V2的模型中inverted bottleneck structure and variants 是用1x1 conv来拓展到更高维的特征空间，这层带来了往外的latency（下图中320-&gt;1280的那一层1x1 conv BN H-Swish）。为了减少latency且保留高维特征，V3把1x1移动到平均池化之后（320→Avg-pool→1x1 conv）。现在计算的特征图大小由7x7变成了1x1，可以大幅度减少计算量。那么之前为了减少计算建立的瓶颈层（960-&gt;960-&gt;320的那一部分）也不需要了。改变前后的比较图：<img src="https://ws3.sinaimg.cn/large/005BYqpggy1g30v8gnvhtj30v00h6wi3.jpg" alt="V3_redesign"></li>
 <li>原先用的是32个3x3的卷积来构建初始滤波器的边缘检测。很多特征图都是彼此的镜像，所以V3砍掉了一半，用16个，参数少了也不用使用激活层了。</li>
 </ul>
 <h4 id="激活函数的设定"><a href="#激活函数的设定" class="headerlink" title="激活函数的设定"></a>激活函数的设定</h4><ul>
