@@ -978,37 +978,6 @@ a.article-title:hover {
   max-width: 100%;
   margin: 0 auto;
 }
-.toc {
-  right: 10px;
-  float: right;
-  margin-bottom: 20px;
-  top: 10px;
-  width: 300px;
-  margin-left: 40px;
-  padding: 5px 10px;
-  background: #f8f8f8;
-  border-style: solid;
-  border-color: #ff69b4;
-  border-width: 1px 1px;
-}
-.toc b {
-  margin-top: 2px;
-  display: block;
-  margin-bottom: -8px;
-  font-size: 10px;
-}
-.toc ul li {
-  margin: 2px 0;
-}
-.toc ul li a {
-  color: #6495ed;
-}
-.toc .toc-link {
-  list-style: none;
-}
-.toc .toc-child {
-  list-style: none;
-}
 #comments {
   background: #fff;
   -webkit-box-shadow: 1px 2px 3px #ddd;
