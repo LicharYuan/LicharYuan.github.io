@@ -25,7 +25,11 @@
 <link rel="stylesheet" href="/css/style.css">
 
   
-<meta name="generator" content="Hexo 6.3.0"></head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
 <body>
   <div id="container">
     <div id="wrap">
@@ -67,12 +71,13 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-Shell-note" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-Shell-note" class="article article-type-post" itemscope
+  itemprop="blogPost">
   <div class="article-meta">
     <a href="/2023/02/15/Shell-note/" class="article-date">
   <time datetime="2023-02-15T05:21:11.000Z" itemprop="datePublished">2023-02-15</time>
 </a>
-    
+      
   <div class="article-category">
     <a class="article-category-link" href="/categories/Code/">Code</a>
   </div>
@@ -80,20 +85,26 @@
   </div>
   <div class="article-inner">
     
-    
-      <header class="article-header">
-        
+      
+        <header class="article-header">
+          
   
     <h1 class="article-title" itemprop="name">
       Shell 初级笔记
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>教程来源：<br><a target="_blank" rel="noopener" href="https://github.com/jaywcjlove/shell-tutorial">shell tutorial</a></p>
+        </header>
+        
+          <div class="article-entry" itemprop="articleBody">
+            
+                      <!-- 
+    <div id="toc">
+        <strong class="sidebar-title"></strong>
+        
+    </div>
+     -->
+                      <p>教程来源：<br><a target="_blank" rel="noopener" href="https://github.com/jaywcjlove/shell-tutorial">shell tutorial</a></p>
 <p>shell 可视为 linux 命令的脚本文件，对于一些复杂的处理当然还是 选择 c++ &#x2F; c 或者其他语言会更方便。</p>
 <span id="more"></span>
 
@@ -108,21 +119,34 @@
 <li>cd 这个指令 并不会在命令行切换路径</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ----------------------------</span></span><br><span class="line"><span class="comment"># 请编写一个 shell 的使用说明</span></span><br><span class="line"><span class="comment"># 并完善相关的代码 功能可以自定义</span></span><br><span class="line"><span class="comment"># ./xx.sh -a -b</span></span><br><span class="line"><span class="comment"># ----------------------------</span></span><br><span class="line"></span><br><span class="line">prog=<span class="variable">$0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">usage</span></span>() &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Usage: <span class="variable">$prog</span> [-u] [-d directory]&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果没有输入 则 打印 usage</span></span><br><span class="line">[ -z <span class="variable">$1</span> ] &amp;&amp; &#123; usage; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 getopts 来解析输入变量</span></span><br><span class="line"><span class="keyword">while</span> <span class="built_in">getopts</span> :u:d: opt; <span class="keyword">do</span> </span><br><span class="line">    <span class="keyword">case</span> <span class="variable">$opt</span> <span class="keyword">in</span></span><br><span class="line">        u) mode=<span class="variable">$OPTARG</span> ;;</span><br><span class="line">        d) <span class="built_in">dir</span>=<span class="variable">$OPTARG</span> ;;</span><br><span class="line">        ?)  <span class="built_in">echo</span> <span class="string">&quot;-<span class="variable">$OPTARG</span> is not an option&quot;</span></span><br><span class="line">            <span class="built_in">exit</span> 2 ;;</span><br><span class="line">        :)  <span class="comment"># 没有为需要参数的选项指定参数</span></span><br><span class="line">            <span class="built_in">echo</span> <span class="string">&quot;This option -<span class="variable">$OPTARG</span> requires an argument.&quot;</span></span><br><span class="line">            <span class="built_in">exit</span> 1 ;;</span><br><span class="line">    <span class="keyword">esac</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$mode</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;x<span class="variable">$mode</span>&quot;</span> = <span class="string">&quot;x1&quot;</span> ];</span><br><span class="line"><span class="keyword">then</span> </span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;use ls for func&quot;</span>;</span><br><span class="line">    func=<span class="built_in">ls</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;x<span class="variable">$mode</span>&quot;</span> = <span class="string">&quot;x2&quot;</span> ];</span><br><span class="line"><span class="keyword">then</span> </span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;use cd for func&quot;</span>;</span><br><span class="line">    func=<span class="built_in">cd</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$dir</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Mode func = <span class="variable">$func</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Dst directory = <span class="variable">$dir</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;run &gt;&gt; <span class="variable">$func</span> <span class="variable">$dir</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$func</span> <span class="variable">$dir</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">ls</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://licharyuan.github.io/2023/02/15/Shell-note/" data-id="clgje76lg00012wtl7za6aiip" class="article-share-link">Share</a>
-      
-      
+                        
+          </div>
+          <footer class="article-footer">
+            <a data-url="http://licharyuan.github.io/2023/02/15/Shell-note/" data-id="clgjelz38000cm5tl4p7vcgmp" class="article-share-link">Share</a>
+            
+                
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/note/" rel="tag">note</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/" rel="tag">shell</a></li></ul>
 
-    </footer>
+          </footer>
   </div>
   
     
+<nav id="article-nav">
   
-</article>
+    <a href="/2023/03/03/NeRF-survey/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          NeRF Survey
+        
+      </div>
+    </a>
+  
+  
+</nav>
 
+      
+</article>
 
 </section>
         
@@ -133,6 +157,10 @@
     <h3 class="widget-title">Recent posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2023/03/03/NeRF-survey/">NeRF Survey</a>
+          </li>
         
           <li>
             <a href="/2023/02/15/Shell-note/">Shell 初级笔记</a>
@@ -147,7 +175,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Code/">Code</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Code/">Code</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Papers/">Papers</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -156,7 +184,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -165,7 +193,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
