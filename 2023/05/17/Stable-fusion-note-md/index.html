@@ -3,14 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: 3D | 小圆的角落</title>
+  <title>Stable-fusion-note.md | 小圆的角落</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="小圆的角落">
-<meta property="og:url" content="http://licharyuan.github.io/tags/3D/index.html">
+  <meta name="description" content="关于 diffusion， 推荐这位大佬的 Diffusion博客 回顾一下diffusion做的事情：  forward: $x_0$ (原图) -&gt; Guass_noise(0, $i_1$) -&gt; $x_1$ -&gt; Guass_noise(0,$i_2$) … -&gt; $x_N$ backward: $x_N$ -&gt; condition_bayes + repar">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stable-fusion-note.md">
+<meta property="og:url" content="http://licharyuan.github.io/2023/05/17/Stable-fusion-note-md/index.html">
 <meta property="og:site_name" content="小圆的角落">
+<meta property="og:description" content="关于 diffusion， 推荐这位大佬的 Diffusion博客 回顾一下diffusion做的事情：  forward: $x_0$ (原图) -&gt; Guass_noise(0, $i_1$) -&gt; $x_1$ -&gt; Guass_noise(0,$i_2$) … -&gt; $x_N$ backward: $x_N$ -&gt; condition_bayes + repar">
 <meta property="og:locale">
+<meta property="article:published_time" content="2023-05-17T14:41:20.000Z">
+<meta property="article:modified_time" content="2023-05-20T10:47:06.477Z">
 <meta property="article:author" content="lichar">
+<meta property="article:tag" content="NeRF">
+<meta property="article:tag" content="StableFusion">
 <meta name="twitter:card" content="summary">
   
   
@@ -65,39 +71,77 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2023/03/03/NeRF-survey/" class="archive-article-date">
-  <time datetime="2023-03-03T05:44:04.000Z" itemprop="datePublished">Mar 3</time>
+        <section id="main"><article id="post-Stable-fusion-note-md" class="article article-type-post" itemscope
+  itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/05/17/Stable-fusion-note-md/" class="article-date">
+  <time datetime="2023-05-17T14:41:20.000Z" itemprop="datePublished">2023-05-17</time>
 </a>
       
+  </div>
+  <div class="article-inner">
+    
+      
+        <header class="article-header">
+          
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/03/03/NeRF-survey/">NeRF Survey</a>
+    <h1 class="article-title" itemprop="name">
+      Stable-fusion-note.md
     </h1>
   
 
-    </header>
+        </header>
+        
+          <div class="article-entry" itemprop="articleBody">
+            
+                      <!-- 
+    <div id="toc">
+        <strong class="sidebar-title"></strong>
+        
+    </div>
+     -->
+                      <p>关于 diffusion， 推荐这位大佬的 <a target="_blank" rel="noopener" href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/">Diffusion博客</a></p>
+<p>回顾一下diffusion做的事情：</p>
+<ul>
+<li>forward: $x_0$ (原图) -&gt; Guass_noise(0, $i_1$) -&gt; $x_1$ -&gt; Guass_noise(0,$i_2$) … -&gt; $x_N$</li>
+<li>backward: $x_N$ -&gt; condition_bayes + reparameter -&gt; $x_{N-1}$ -&gt; … -&gt; $x_0$</li>
+</ul>
+<p>从 0 到 N 的 forward 过程，可以使用 $q(x_N | x_{N-1})$ 来表示；从 N 到 0 的 backward 过程用 $p_\theta(x_{N-1} | x_{N})$ 来表示；前向的参数是确定的，就像无法预测未来，我们也无法估计 $q(x_{N-1} | x_{N})$；但是高斯参数</p>
+
+                        
+          </div>
+          <footer class="article-footer">
+            <a data-url="http://licharyuan.github.io/2023/05/17/Stable-fusion-note-md/" data-id="clkj3yry90000gpcb7nijd5x6" class="article-share-link">Share</a>
+            
+                
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/StableFusion/" rel="tag">StableFusion</a></li></ul>
+
+          </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/05/17/diffusion-note-md/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          diffusion-note.md
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/04/16/Hexo-collections/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hexo 资料汇总</div>
+    </a>
+  
+</nav>
+
+      
 </article>
-  
-  
-    </div></section>
-  
+
 </section>
         
           <aside id="sidebar">

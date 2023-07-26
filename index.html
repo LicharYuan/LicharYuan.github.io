@@ -179,6 +179,154 @@ mjx-container[display="true"] + br {
       <div class="outer">
         <section id="main">
   
+    <article id="post-tools-collections" class="article article-type-post" itemscope
+  itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/07/26/tools-collections/" class="article-date">
+  <time datetime="2023-07-26T02:25:41.000Z" itemprop="datePublished">2023-07-26</time>
+</a>
+      
+  </div>
+  <div class="article-inner">
+    
+      
+        <header class="article-header">
+          
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/07/26/tools-collections/">Tools Collections</a>
+    </h1>
+  
+
+        </header>
+        
+          <div class="article-entry" itemprop="articleBody">
+            
+                      <!-- 
+    <div id="toc">
+        <strong class="sidebar-title"></strong>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Profiler 🔗</span></a></li></ol>
+    </div>
+     -->
+                      <h2><span id="profiler">Profiler</span><a href="#profiler" class="header-anchor"> 🔗</a></h2><ol>
+<li><p>Tuna: <a target="_blank" rel="noopener" href="https://github.com/nschloe/tuna">https://github.com/nschloe/tuna</a></p>
+<ul>
+<li>analyze <strong>python</strong> process</li>
+<li>analyze <strong>import</strong> time</li>
+</ul>
+</li>
+</ol>
+
+                        
+          </div>
+          <footer class="article-footer">
+            <a data-url="http://licharyuan.github.io/2023/07/26/tools-collections/" data-id="clkj3yryf0005gpcb6ebbffqc" class="article-share-link">Share</a>
+            
+                
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tools/" rel="tag">tools</a></li></ul>
+
+          </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-diffusion-note-md" class="article article-type-post" itemscope
+  itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/05/17/diffusion-note-md/" class="article-date">
+  <time datetime="2023-05-17T14:45:21.000Z" itemprop="datePublished">2023-05-17</time>
+</a>
+      
+  </div>
+  <div class="article-inner">
+    
+      
+        <header class="article-header">
+          
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/05/17/diffusion-note-md/">diffusion-note.md</a>
+    </h1>
+  
+
+        </header>
+        
+          <div class="article-entry" itemprop="articleBody">
+            
+                      <!-- 
+    <div id="toc">
+        <strong class="sidebar-title"></strong>
+        
+    </div>
+     -->
+                      
+                        
+          </div>
+          <footer class="article-footer">
+            <a data-url="http://licharyuan.github.io/2023/05/17/diffusion-note-md/" data-id="clkj3yryb0001gpcb8m12biwo" class="article-share-link">Share</a>
+            
+                
+          </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Stable-fusion-note-md" class="article article-type-post" itemscope
+  itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/05/17/Stable-fusion-note-md/" class="article-date">
+  <time datetime="2023-05-17T14:41:20.000Z" itemprop="datePublished">2023-05-17</time>
+</a>
+      
+  </div>
+  <div class="article-inner">
+    
+      
+        <header class="article-header">
+          
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/05/17/Stable-fusion-note-md/">Stable-fusion-note.md</a>
+    </h1>
+  
+
+        </header>
+        
+          <div class="article-entry" itemprop="articleBody">
+            
+                      <!-- 
+    <div id="toc">
+        <strong class="sidebar-title"></strong>
+        
+    </div>
+     -->
+                      <p>关于 diffusion， 推荐这位大佬的 <a target="_blank" rel="noopener" href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/">Diffusion博客</a></p>
+<p>回顾一下diffusion做的事情：</p>
+<ul>
+<li>forward: $x_0$ (原图) -&gt; Guass_noise(0, $i_1$) -&gt; $x_1$ -&gt; Guass_noise(0,$i_2$) … -&gt; $x_N$</li>
+<li>backward: $x_N$ -&gt; condition_bayes + reparameter -&gt; $x_{N-1}$ -&gt; … -&gt; $x_0$</li>
+</ul>
+<p>从 0 到 N 的 forward 过程，可以使用 $q(x_N | x_{N-1})$ 来表示；从 N 到 0 的 backward 过程用 $p_\theta(x_{N-1} | x_{N})$ 来表示；前向的参数是确定的，就像无法预测未来，我们也无法估计 $q(x_{N-1} | x_{N})$；但是高斯参数</p>
+
+                        
+          </div>
+          <footer class="article-footer">
+            <a data-url="http://licharyuan.github.io/2023/05/17/Stable-fusion-note-md/" data-id="clkj3yry90000gpcb7nijd5x6" class="article-share-link">Share</a>
+            
+                
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/StableFusion/" rel="tag">StableFusion</a></li></ul>
+
+          </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Hexo-collections" class="article article-type-post" itemscope
   itemprop="blogPost">
   <div class="article-meta">
@@ -348,6 +496,18 @@ mjx-container[display="true"] + br {
       <ul>
         
           <li>
+            <a href="/2023/07/26/tools-collections/">Tools Collections</a>
+          </li>
+        
+          <li>
+            <a href="/2023/05/17/diffusion-note-md/">diffusion-note.md</a>
+          </li>
+        
+          <li>
+            <a href="/2023/05/17/Stable-fusion-note-md/">Stable-fusion-note.md</a>
+          </li>
+        
+          <li>
             <a href="/2023/04/16/Hexo-collections/">Hexo 资料汇总</a>
           </li>
         
@@ -377,7 +537,7 @@ mjx-container[display="true"] + br {
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StableFusion/" rel="tag">StableFusion</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/" rel="tag">tools</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -386,7 +546,7 @@ mjx-container[display="true"] + br {
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
