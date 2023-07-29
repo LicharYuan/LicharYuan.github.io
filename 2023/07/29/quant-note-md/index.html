@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>量化笔记 | 小圆的角落</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本文介绍量化的相关的知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="量化笔记">
+<meta property="og:url" content="http://licharyuan.github.io/2023/07/29/quant-note-md/index.html">
+<meta property="og:site_name" content="小圆的角落">
+<meta property="og:description" content="本文介绍量化的相关的知识">
+<meta property="og:locale">
+<meta property="article:published_time" content="2023-07-29T09:09:03.000Z">
+<meta property="article:modified_time" content="2023-07-29T09:10:55.031Z">
+<meta property="article:author" content="lichar">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Ubuntu:400,700,400italic" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">小圆的角落</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">好乐无荒 良士休休</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <a id="nav-github-link" class="nav-icon" href="https://github.com/LicharYuan" target="_blank"></a>
+        
+        
+        
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://licharyuan.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-quant-note-md" class="article article-type-post" itemscope
+  itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/07/29/quant-note-md/" class="article-date">
+  <time datetime="2023-07-29T09:09:03.000Z" itemprop="datePublished">2023-07-29</time>
+</a>
+      
+  </div>
+  <div class="article-inner">
+    
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      量化笔记
+    </h1>
+  
+
+        </header>
+        
+          <div class="article-entry" itemprop="articleBody">
+            
+                      <!-- 
+    <div id="toc">
+        <strong class="sidebar-title"></strong>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">基础部分 🔗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">量化分类 🔗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">PTQ 🔗</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">和计算图 🔗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">和LLM 🔗</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">QAT 的一些进展 🔗</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text"> 🔗</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">参考 🔗</span></a></li></ol>
+    </div>
+     -->
+                      <p>本文介绍量化的相关的知识</p>
+<span id="more"></span>
+
+<h2><span id="基础部分">基础部分</span><a href="#基础部分" class="header-anchor"> 🔗</a></h2><p>量化后表示范围有限，输入的需要被 <code>clamp</code>.  我们定义，quantize 的过程为 float数据类型的数据转换到int8 数据类型叫做 Q 过程， DQ则是 int8-&gt; float.</p>
+<p>对于输入为$x$, int8的定点区间为 $[q_{min}, q_{max}]$ 时</p>
+<ul>
+<li>Q过程: $x_Q &#x3D; clamp(q_{min}, q_{max} ,round(x &#x2F; scale) + zp$ </li>
+<li>DQ过程: $x_{DQ} &#x3D; (X_Q - zero-point) * scale $</li>
+</ul>
+<p>这个过程的信息是有损失的，损失程度和量化过程的参数有关 $(scale, zp (zero-point), q_{min}, q_{max}$) 有关。  </p>
+<ul>
+<li><p>zero-point的选择</p>
+<p>  因为BN的存在数据分布不会太离谱，大部分选择 zero-point可以设置为0，计算更快且不会有大的性能 drop, 可参考 [<a target="_blank" rel="noopener" href="https://developer.download.nvidia.cn/video/gputechconf/gtc/2019/presentation/s9659-inference-at-reduced-precision-on-gpus.pdf">3</a>]. </p>
+</li>
+<li><p>scale 的选择</p>
+<p>  简单粗暴点，可以使用 s &#x3D; max(q_min.abs(), q_max.abs()) &#x2F; max(x)。但是当数值离群点比较多时，这种方法容易让重要数值没有区分性。</p>
+<p>  更准确的是先统计直方图，再采用不同的方案计算 “max(x)”: </p>
+<ul>
+<li><p>使用交叉熵来统计 </p>
+<ol>
+<li>先划分N个bins对 float数据统计结果 </li>
+<li>遍历区间, 对比采用量化统计 得到的_pdf，以及不使用量化得到的真值pdf, 计算交叉熵</li>
+<li>选取最小交叉熵所在的区间的右值，作为最大值 amax 。此时 scale &#x3D; max(q_min.abs(), q_max.abs()) &#x2F; amax</li>
+</ol>
+<p>  示例代码如下:<br>  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">hist, bin_edges = np.histogram(x, bins=<span class="number">2000</span>, <span class="built_in">min</span>=x.<span class="built_in">min</span>, <span class="built_in">max</span>=x.<span class="built_in">max</span>)</span><br><span class="line">nbins = <span class="number">128</span> </span><br><span class="line">_pdf_count = np.zeros(nbins, dtype=np.float64)</span><br><span class="line">start =  <span class="number">1</span></span><br><span class="line">end = <span class="built_in">len</span>(hist) + <span class="number">1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(start, end, stride)     </span><br><span class="line">    space = np.linspace(<span class="number">0</span>, i, num=nbins+<span class="number">1</span>)   </span><br><span class="line">    <span class="comment"># [0, i] mapping to [0, nbins] </span></span><br><span class="line">    digitized_space = np.digitize(<span class="built_in">range</span>(i), space) - <span class="number">1</span>  </span><br><span class="line">    <span class="keyword">for</span> idx, digitized <span class="keyword">in</span> <span class="built_in">enumerate</span>(digitized_space):</span><br><span class="line">        _pdf_count[digitized] += hist[idx]</span><br><span class="line">    <span class="comment"># convert to prob</span></span><br><span class="line">    counter = Counter(digitized_space)</span><br><span class="line">    <span class="keyword">for</span> key, val <span class="keyword">in</span> counter.items():</span><br><span class="line">        _pdf_count[key] = _pdf_count[key] / val</span><br><span class="line">    _pdf = np.zeros(i)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> idx, digitized <span class="keyword">in</span> <span class="built_in">enumerate</span>(digitized_space):</span><br><span class="line">        _pdf[idx] = _pdf_count[digitized]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># GT</span></span><br><span class="line">    pdf = np.array(hist[:<span class="built_in">len</span>(digitized_space)])</span><br><span class="line">    pdf[-<span class="number">1</span>] += np.<span class="built_in">sum</span>(hist[i:])</span><br><span class="line">    pdf /= <span class="built_in">sum</span>(pdf)  <span class="comment"># normalize</span></span><br><span class="line">    ent = entropy(pdf, _pdf)</span><br><span class="line">Get minimum ent <span class="keyword">and</span> its index</span><br></pre></td></tr></table></figure></p>
+</li>
+<li><p>使用MSE的方式</p>
+<p>  和交叉熵都需要遍历区间，但是使用最小化量化中心点的方式。如果数据是对称分布的情况会算的更准。</p>
+<p>  示例代码如下: </p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">hist, bin_edges = np.histogram(x, bins=2000, min=x.min, max=x.max)</span><br><span class="line">centers = (bin_edges[1:] + bin_edges[:-1]) / 2</span><br><span class="line">start =  1</span><br><span class="line">end = len(hist) + 1</span><br><span class="line">for i in range(start, end, stride):</span><br><span class="line">    # try to quant and get quant centers</span><br><span class="line">    amax = centers[i]</span><br><span class="line">    quant_centers = quant_tensor(centers, amax, num_bits, unsigned)</span><br><span class="line">    mse = ((quant_centers - centers)**2 * counts).mean()</span><br><span class="line">Get minium mse and its index.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用百分比的方式</p>
+<p>  计算直方图的 cdf, 得到能够包含 K% 数据最大的 index</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hist, bin_edges = np.histogram(x, bins=2000, min=x.min, max=x.max)</span><br><span class="line">total = hist.sum()</span><br><span class="line">cdf = np.cumsum(hist / total) </span><br><span class="line">idx = np.searchsorted(cdf, K / 100)</span><br><span class="line">amax = bin_edges[idx]</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>  对于特殊的数据分布，可能有一些特定的方法来实现。</p>
+</li>
+<li><p>$q_{min}$, $q_{max}$ </p>
+<p>  通常使用 [-127, 127] 或者 [-128, 127]。</p>
+<p>  如果对于 <code> s = max(q_min.abs(), q_max.abs()) / max(x)</code> 的情况，后者会在对称分布的情况会引入一些bias [<a target="_blank" rel="noopener" href="https://developer.download.nvidia.cn/video/gputechconf/gtc/2019/presentation/s9659-inference-at-reduced-precision-on-gpus.pdf">3</a>]。此时可以修改区间大小。</p>
+</li>
+</ul>
+<p>那么，量化如何在卷积中加速呢？</p>
+<p>首先来看卷积的操作, 我们用 $y &#x3D; conv(w, x)$ 来表示原始卷积，卷积的运算满足</p>
+<ul>
+<li>$y &#x3D; conv(w-a, x) &#x3D; conv(w, x) - conv(a, x) &#x3D; conv(w, x) - k$, k是个常数</li>
+<li>$y &#x3D; conv(a<em>w , b</em>x) &#x3D; a * b * conv(w, x)$</li>
+</ul>
+<p>$y &#x3D; conv(w, x) ~&#x3D; conv(w_{DQ}, x_{DQ}) &#x3D; conv((w_{Q} - w_{z}) * w_{scale}, (x_{Q} - x_{z}) * x_{scale}) $ </p>
+<p>$  &#x3D; w_{scale} * x_{scale} ( conv(w_{Q}, x_{Q}) - conv(w_{Q},x_z) - conv(w_z, x_{Q}) + conv(w_z, x_z)) $</p>
+<p>后三项的卷积都是带常数的，可以用加法来解决。 如果 $x_z, w_z$ 都设置0，他们就完美消失了。</p>
+<p>至于 $conv(w_{Q}, x_{Q}$的实现， 我们可以优化 gemm kernel的来实现， 这个故事可就太长了，可以简单的感受一下cublas的 int8 版本快多少。</p>
+<ul>
+<li><p>cublas_kernel_dtype.cu</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cublas_v2.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> USE_INT8</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> message(<span class="string">&quot;use INT8&quot;</span>)</span></span><br><span class="line"><span class="keyword">using</span> mt = <span class="type">char</span>;</span><br><span class="line"><span class="keyword">using</span> rt = <span class="type">int</span>;</span><br><span class="line"><span class="keyword">using</span> st = <span class="type">int</span>;</span><br><span class="line">cudaDataType   Atype = CUDA_R_8I;</span><br><span class="line">cudaDataType   Ctype = CUDA_R_32I;</span><br><span class="line">cublasComputeType_t   computeType = CUBLAS_COMPUTE_32I;</span><br><span class="line"><span class="meta">#<span class="keyword">elif</span> USE_FP16</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> message(<span class="string">&quot;use FP16&quot;</span>)</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cuda_fp16.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> mt = half;</span><br><span class="line"><span class="keyword">using</span> rt = half;</span><br><span class="line"><span class="keyword">using</span> st = half;</span><br><span class="line">cudaDataType   Atype = CUDA_R_16F;</span><br><span class="line">cudaDataType   Ctype = CUDA_R_16F;</span><br><span class="line">cublasComputeType_t   computeType = CUBLAS_COMPUTE_16F;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="comment">// using FP32</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> message(<span class="string">&quot;use FP32&quot;</span>)</span></span><br><span class="line"><span class="keyword">using</span> mt = <span class="type">float</span>;</span><br><span class="line"><span class="keyword">using</span> rt = <span class="type">float</span>;</span><br><span class="line"><span class="keyword">using</span> st = <span class="type">float</span>;</span><br><span class="line">cudaDataType   Atype = CUDA_R_32F;</span><br><span class="line">cudaDataType   Ctype = CUDA_R_32F;</span><br><span class="line">cublasComputeType_t   computeType = CUBLAS_COMPUTE_32F;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> dim = <span class="number">4096</span>;</span><br><span class="line"><span class="type">int</span> m = dim;</span><br><span class="line"><span class="type">int</span> n = dim;</span><br><span class="line"><span class="type">int</span> k = dim;</span><br><span class="line">mt *A, *B;</span><br><span class="line">rt *C;</span><br><span class="line"><span class="built_in">cudaMalloc</span>(&amp;A, <span class="built_in">sizeof</span>(A[<span class="number">0</span>])*m*k);</span><br><span class="line"><span class="built_in">cudaMalloc</span>(&amp;B, <span class="built_in">sizeof</span>(B[<span class="number">0</span>])*n*k);</span><br><span class="line"><span class="built_in">cudaMalloc</span>(&amp;C, <span class="built_in">sizeof</span>(C[<span class="number">0</span>])*m*n);</span><br><span class="line">st alpha = <span class="number">1</span>;</span><br><span class="line">st beta = <span class="number">0</span>;</span><br><span class="line">cublasHandle_t h;</span><br><span class="line">cublasStatus_t stat = <span class="built_in">cublasCreate</span>(&amp;h);</span><br><span class="line">stat = <span class="built_in">cublasGemmEx</span>(h,</span><br><span class="line">                    CUBLAS_OP_T,</span><br><span class="line">                    CUBLAS_OP_N,</span><br><span class="line">                    m,</span><br><span class="line">                    n,</span><br><span class="line">                    k,</span><br><span class="line">                    &amp;alpha,</span><br><span class="line">                    A,</span><br><span class="line">                    Atype,</span><br><span class="line">                    dim,</span><br><span class="line">                    B,</span><br><span class="line">                    Atype,</span><br><span class="line">                    dim,</span><br><span class="line">                    &amp;beta,</span><br><span class="line">                    C,</span><br><span class="line">                    Ctype,</span><br><span class="line">                    dim,</span><br><span class="line">                    computeType,</span><br><span class="line">                    CUBLAS_GEMM_DEFAULT);</span><br><span class="line">std::cout &lt;&lt; (<span class="type">int</span>)stat &lt;&lt; std::endl;</span><br><span class="line"><span class="built_in">cudaDeviceSynchronize</span>();</span><br><span class="line">cudaError_t err = <span class="built_in">cudaGetLastError</span>();</span><br><span class="line">std::cout &lt;&lt; <span class="built_in">cudaGetErrorString</span>(err) &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+<li><p>compile</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">nvcc cublas_kernel_dtype.cu -o test_fp32 -DUSE_FP32 -lcublas</span><br><span class="line">nvcc cublas_kernel_dtype.cu -o test_fp16 -DUSE_FP16 -lcublas</span><br><span class="line">nvcc cublas_kernel_dtype.cu -o test_int8 -DUSE_INT8 -lcublas</span><br><span class="line"></span><br><span class="line">nsys nvprof --print-gpu-trace ./test_int8</span><br><span class="line">nsys nvprof --print-gpu-trace ./test_fp16</span><br><span class="line">nsys nvprof --print-gpu-trace ./test_fp32</span><br><span class="line"></span><br><span class="line"># kernel time run ONCE</span><br><span class="line"># 26.81ms 3.2ms 2ms</span><br><span class="line"># kernel name</span><br><span class="line"># ampere_sgemm_128x32_tn  ampere_h16816gemm_128x128_ldg8_stages_32x5_tn  cutlass::Kernel&lt;cutlass_80_tensorop_i16832gemm_s8_128x64_128x3_tn_align16&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2><span id="量化分类">量化分类</span><a href="#量化分类" class="header-anchor"> 🔗</a></h2><ul>
+<li><p>非均匀</p>
+<p>  在上面的介绍里，我们对定点数的转换都是都是均匀的，为了让数据具有区分性一些方案也会用非均匀的映射。这种方式也会带来更多的计算量，工程上（以及我）并不喜欢这种方案。  </p>
+</li>
+<li><p>定点量化</p>
+<p>  在选取 scale 的时候是 1 &#x2F; 2^N, 这样Q&#x2F;DQ过程可以用移位来更快的实现（在硬件支持的基础上）</p>
+</li>
+<li><p>训练后量化 (post-training quantization, PTQ)</p>
+<p>  训练后对权重重新统计，直接用 int8 的kernel计算即可。如果统计发生在图融合之前，量化参数需要对应修改。</p>
+</li>
+<li><p>训练时量化 (quantization-aware training QAT)</p>
+<p>  通常会在训练后量化掉点后，引入训练时量化。这样可以在训练的时候，防止数值分布太离谱。保持训练稳定的trick可以参考[<a target="_blank" rel="noopener" href="https://developer.download.nvidia.cn/video/gputechconf/gtc/2019/presentation/s9659-inference-at-reduced-precision-on-gpus.pdf">3</a>]. 这里只说一下结论</p>
+<ul>
+<li>EMA 需要小心使用</li>
+<li>对BN需要特殊对待</li>
+<li>模型存在 size &amp; 可压缩性的 trade-off, 因为大模型对噪声的容忍度比较高</li>
+<li>distill 可以帮助提高量化训练性能</li>
+<li>正则化有助于减小weights的range, 可以减小量化难度</li>
+</ul>
+</li>
+</ul>
+<h2><span id="ptq">PTQ</span><a href="#ptq" class="header-anchor"> 🔗</a></h2><h3><span id="和计算图">和计算图</span><a href="#和计算图" class="header-anchor"> 🔗</a></h3><h3><span id="和llm">和LLM</span><a href="#和llm" class="header-anchor"> 🔗</a></h3><p>LLM的部署量化可以大幅度减少成本，加快速度。比如 [LLAMA.cpp]</p>
+<h2><span id="qat-的一些进展">QAT 的一些进展</span><a href="#qat-的一些进展" class="header-anchor"> 🔗</a></h2><h3><span id></span><a href="#" class="header-anchor"> 🔗</a></h3><h2><span id="参考">参考</span><a href="#参考" class="header-anchor"> 🔗</a></h2><ol>
+<li><a target="_blank" rel="noopener" href="https://docs.nvidia.com/deeplearning/tensorrt/tensorflow-quantization-toolkit/docs/docs/intro_to_quantization.html">https://docs.nvidia.com/deeplearning/tensorrt/tensorflow-quantization-toolkit/docs/docs/intro_to_quantization.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1806.08342.pdf">https://arxiv.org/pdf/1806.08342.pdf</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.download.nvidia.cn/video/gputechconf/gtc/2019/presentation/s9659-inference-at-reduced-precision-on-gpus.pdf">https://developer.download.nvidia.cn/video/gputechconf/gtc/2019/presentation/s9659-inference-at-reduced-precision-on-gpus.pdf</a></li>
+</ol>
+<p>[LLAMA.cpp]:</p>
+
+                        
+          </div>
+          <footer class="article-footer">
+            <a data-url="http://licharyuan.github.io/2023/07/29/quant-note-md/" data-id="clknsk5qb0000q1cbebz80xkt" class="article-share-link">Share</a>
+            
+                
+          </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2023/07/26/tools-collections/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Tools Collections</div>
+    </a>
+  
+</nav>
+
+      
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/07/29/quant-note-md/">量化笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2023/07/26/tools-collections/">Tools Collections</a>
+          </li>
+        
+          <li>
+            <a href="/2023/04/16/Hexo-collections/">Hexo 资料汇总</a>
+          </li>
+        
+          <li>
+            <a href="/2023/03/03/NeRF-survey/">NeRF Survey</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/15/Shell-note/">Shell 初级笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Code/">Code</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Papers/">Papers</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/" rel="tag">tools</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2023 lichar<br>
+      
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/about" class="mobile-nav-link">关于</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<div id="scroll2top" style="position:fixed;bottom:150px;right:50px;cursor: pointer;Z-index:9999">
+<a title="返回顶部" href="#"><img src="/scroll2top/scrollup.png"/></a>
+</div>
+<script src="/scroll2top/scroll2top.js"></script>
+
+
+
+  </div>
+</body>
+</html>
