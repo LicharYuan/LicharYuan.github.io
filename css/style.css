@@ -633,9 +633,10 @@ a.article-title:hover {
 .article-entry blockquote {
   font-family: Ubuntu, serif;
   font-style: italic;
-  font-size: 0.96em;
-  margin: 1.6em 20px;
-  text-align: center;
+  font-size: 0.95em;
+  margin: 1.6em 4px;
+  text-align: left;
+  background: #dcdcdc;
 }
 .article-entry blockquote footer {
   font-size: 16px;
@@ -1161,16 +1162,16 @@ a.article-title:hover {
 .article-entry .highlight {
   background: #2d2d2d;
   margin: 0 -12px;
-  padding: 15px 12px;
+  padding: 6px 12px;
   border-style: solid;
   border-color: #f3feb1;
   border-width: 1px 0;
   overflow: auto;
   color: #ccc;
   line-height: 25.6px;
-  border-radius: 16px;
-  background: #333;
-  margin: 1px 10px 1px 10px;
+  border-radius: 4px;
+  background: #000;
+  margin: 1px 2px 1px 2px;
   border: 3px solid #eee;
 }
 .article-entry .highlight .gutter pre,
@@ -1181,7 +1182,7 @@ a.article-title:hover {
 .article-entry pre,
 .article-entry code {
   font-family: "Ubuntu Mono", monospace;
-  font-weight: bold;
+  font-weight: normal;
 }
 .article-entry code {
   background: #eee;
