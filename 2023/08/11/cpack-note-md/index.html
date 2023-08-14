@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>如何打包你的c++程序 [DEBIAN] | 小圆的角落</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本文打包的含义为: 将程序变成 *.deb 包，类似 python 的 *.whl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何打包你的c++程序 [DEBIAN]">
+<meta property="og:url" content="http://licharyuan.github.io/2023/08/11/cpack-note-md/index.html">
+<meta property="og:site_name" content="小圆的角落">
+<meta property="og:description" content="本文打包的含义为: 将程序变成 *.deb 包，类似 python 的 *.whl">
+<meta property="og:locale">
+<meta property="article:published_time" content="2023-08-11T09:35:41.000Z">
+<meta property="article:modified_time" content="2023-08-14T05:06:54.947Z">
+<meta property="article:author" content="lichar">
+<meta property="article:tag" content="note">
+<meta property="article:tag" content="cmake">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Ubuntu:400,700,400italic" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">小圆的角落</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">好乐无荒 良士休休</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <a id="nav-github-link" class="nav-icon" href="https://github.com/LicharYuan" target="_blank"></a>
+        
+        
+        
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://licharyuan.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-cpack-note-md" class="article article-type-post" itemscope
+  itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/08/11/cpack-note-md/" class="article-date">
+  <time datetime="2023-08-11T09:35:41.000Z" itemprop="datePublished">2023-08-11</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Code/">Code</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      如何打包你的c++程序 [DEBIAN]
+    </h1>
+  
+
+        </header>
+        
+          <div class="article-entry" itemprop="articleBody">
+            
+                      <!-- 
+    <div id="toc">
+        <strong class="sidebar-title"></strong>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">dpkg-deb  打包 🔗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">cpack 打包 🔗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Upload 🔗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Reference 🔗</span></a></li></ol>
+    </div>
+     -->
+                      <p>本文打包的含义为: 将程序变成 <code>*.deb</code> 包，类似 python 的 <code>*.whl</code></p>
+<span id="more"></span>
+
+<div class="toc">
+
+<!-- toc -->
+
+<ul>
+<li><a href="#dpkg-deb-%E6%89%93%E5%8C%85">dpkg-deb 打包</a></li>
+<li><a href="#cpack-%E6%89%93%E5%8C%85">cpack 打包</a></li>
+<li><a href="#upload">Upload</a></li>
+<li><a href="#reference">Reference</a></li>
+</ul>
+<!-- tocstop -->
+
+</div>
+
+<p>本文介绍两种常用的打包方式：</p>
+<ul>
+<li><p>dpkg-deb 的打包方式</p>
+</li>
+<li><p>cpack打包，结合 cmake 项目</p>
+</li>
+</ul>
+<h2><span id="dpkg-deb-打包">dpkg-deb  打包</span><a href="#dpkg-deb-打包" class="header-anchor"> 🔗</a></h2><ol>
+<li><p>新建文件夹<code>hello-world</code>, 并准备用于打包应用程序. （已有可跳过）</p>
+<p> 例如： hello-world.cc</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123; </span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Hello World Example For Deb-package \n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 编译 <code>g++ hello-world.cc -o hello-world</code></p>
+</li>
+<li><p>新建文件夹 <code>hello-world_0.1-1_all</code> 来准备打包, <strong>字符串只能用 “-+.” 来拼接</strong></p>
+<p> <code>mkdir DEBIAN &amp;&amp; cd DEBIAN &amp;&amp; vim control</code></p>
+<p> 写入以下信息:</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Package: hello-world</span><br><span class="line">Version: 0.1-1</span><br><span class="line">Section: custom</span><br><span class="line">Priority: optional</span><br><span class="line">Architecture: all</span><br><span class="line">Essential: no</span><br><span class="line">Installed-Size: 1024</span><br><span class="line">Maintainer: xxx</span><br><span class="line">Description: hello-world example</span><br></pre></td></tr></table></figure>
+
+<p> 拷贝之前编译的文件: <code>cd .. &amp;&amp; mkdir -p usr/bin &amp;&amp; cp ../hello-world/hello-world /usr/bin</code></p>
+<p> 最终文件目录结构为:</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">hello-world_0.1-1_all</span><br><span class="line">├── DEBIAN</span><br><span class="line">│   └── control</span><br><span class="line">└── usr</span><br><span class="line">    └── bin</span><br><span class="line">        └── hello-world</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>dpkg-deb</code> 打包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dpkg-deb --build  hello-world_0.1-1_all</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo dpkg -i hello-world_0.1-1_all.deb</span><br><span class="line">/usr/bin/hello-world</span><br><span class="line"># Hello World Example For Deb-package </span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>更多设定可查看: <a target="_blank" rel="noopener" href="https://www.debian.org/doc/debian-policy/ch-controlfields.html">debain_contrl</a></p>
+<p>本节代码如下: <a target="_blank" rel="noopener" href="https://github.com/LicharYuan/blogs-examples/tree/master/pack_deb/dpkg-deb">代码1🔗</a></p>
+<h2><span id="cpack-打包">cpack 打包</span><a href="#cpack-打包" class="header-anchor"> 🔗</a></h2><p>步骤和上面类似，通过cpack可以设置对应的变量，完成打包。</p>
+<ol>
+<li><p>准备打包的程序 (已有可跳过)，结构如下。</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">├── CMakeLists.txt</span><br><span class="line">├── cmake</span><br><span class="line">│   ├── Installing.cmake</span><br><span class="line">│   └── Packing.cmake</span><br><span class="line">├── include</span><br><span class="line">│   └── test.h</span><br><span class="line">├── main.cc</span><br><span class="line">├── readme.md</span><br><span class="line">└── src</span><br><span class="line">    ├── const.h</span><br><span class="line">    └── test.cc</span><br></pre></td></tr></table></figure>
+
+<p> 东西比较多，请在链接下查看: <a target="_blank" rel="noopener" href="https://github.com/LicharYuan/blogs-examples/tree/master/pack_deb_cmake">代码2🔗</a></p>
+</li>
+<li><p>需要额外准备 <code>Packing.cmake</code> 具体含义可以在 <a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/book/mastering-cmake/chapter/Packaging%20With%20CPack.html">cpack</a> 查看</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"># these are cache variables, so they could be overwritten with -D,</span><br><span class="line">set(CPACK_PACKAGE_NAME $&#123;PROJECT_NAME&#125;</span><br><span class="line">    CACHE STRING &quot;The resulting package name&quot;</span><br><span class="line">)</span><br><span class="line"># which is useful in case of packing only selected components instead of the whole thing</span><br><span class="line">set(CPACK_PACKAGE_DESCRIPTION_SUMMARY &quot;Simple Print Msg&quot;</span><br><span class="line">    CACHE STRING &quot;Package description for the package metadata&quot;</span><br><span class="line">)</span><br><span class="line">set(CPACK_PACKAGE_VENDOR &quot;xxxx&quot;)</span><br><span class="line"></span><br><span class="line">set(CPACK_VERBATIM_VARIABLES YES)</span><br><span class="line">set(CPACK_PACKAGE_INSTALL_DIRECTORY $&#123;CPACK_PACKAGE_NAME&#125;)</span><br><span class="line">SET(CPACK_OUTPUT_FILE_PREFIX &quot;$&#123;CMAKE_SOURCE_DIR&#125;/_packages&quot;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Set dependencies if needed</span><br><span class="line"># set(CPACK_DEBIAN_PACKAGE_DEPENDS &quot;libc6 (&gt;= 2.14)&quot;)</span><br><span class="line"># set(CPACK_RPM_PACKAGE_REQUIRES &quot;libstdc++ &gt;= 6.0&quot;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">set(CPACK_PACKAGING_INSTALL_PREFIX &quot;/opt/test&quot;)#/$&#123;CMAKE_PROJECT_VERSION&#125;&quot;)</span><br><span class="line"></span><br><span class="line">set(CPACK_PACKAGE_VERSION_MAJOR $&#123;PROJECT_VERSION_MAJOR&#125;)</span><br><span class="line">set(CPACK_PACKAGE_VERSION_MINOR $&#123;PROJECT_VERSION_MINOR&#125;)</span><br><span class="line">set(CPACK_PACKAGE_VERSION_PATCH $&#123;PROJECT_VERSION_PATCH&#125;)</span><br><span class="line"></span><br><span class="line">set(CPACK_PACKAGE_CONTACT &quot;xxx@gmail.com&quot;)</span><br><span class="line">set(CPACK_DEBIAN_PACKAGE_MAINTAINER &quot;xxxx&quot;)</span><br><span class="line"></span><br><span class="line"># set(CPACK_RESOURCE_FILE_LICENSE &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/LICENSE&quot;)</span><br><span class="line">set(CPACK_RESOURCE_FILE_README &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/readme.md&quot;)</span><br><span class="line"></span><br><span class="line">set(CPACK_PACKAGE_FILE_NAME &quot;$&#123;CPACK_PACKAGE_NAME&#125;-$&#123;CPACK_PACKAGE_VERSION&#125;&quot;)</span><br><span class="line">set(CPACK_GENERATOR &quot;ZIP;TGZ&quot;)</span><br><span class="line"># Set generator-specific options if needed</span><br><span class="line">set(CPACK_ZIP_COMPONENT_INSTALL ON)</span><br><span class="line">set(CPACK_TGZ_COMPONENT_INSTALL ON)</span><br><span class="line"></span><br><span class="line"># package name for deb. If set, then instead of some-application-0.9.2-Linux.deb</span><br><span class="line"># you&#x27;ll get some-application_0.9.2_amd64.deb (note the underscores too)</span><br><span class="line">set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)</span><br><span class="line"></span><br><span class="line"># that is if you want every group to have its own package,</span><br><span class="line"># although the same will happen if this is not set (so it defaults to ONE_PER_GROUP)</span><br><span class="line"># and CPACK_DEB_COMPONENT_INSTALL is set to YES</span><br><span class="line">set(CPACK_COMPONENTS_GROUPING ALL_COMPONENTS_IN_ONE)#ONE_PER_GROUP)</span><br><span class="line"># without this you won&#x27;t be able to pack only specified component</span><br><span class="line">set(CPACK_DEB_COMPONENT_INSTALL YES)</span><br><span class="line"></span><br><span class="line">include(CPack)</span><br><span class="line"></span><br><span class="line"># $&#123;namespace&#125; could be your main project name, or company, or whatever</span><br><span class="line">set(CPACK_PACKAGE_NAME &quot;$&#123;namespace&#125;-$&#123;PROJECT_NAME&#125;&quot;</span><br><span class="line">    CACHE STRING &quot;The resulting package name&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"># where to find our CMake modules</span><br><span class="line">set(CMAKE_MODULE_PATH &quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/cmake&quot;)</span><br><span class="line"></span><br><span class="line">message(STATUS &quot;Components to pack: $&#123;CPACK_COMPONENTS_ALL&#125;&quot;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>cpack -G DEB</code> 完成 debian 打包。</p>
+</li>
+<li><p>检查 cpack 发生了什么</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">cd ../_packages</span><br><span class="line">dpkg-deb -R ./test-cmake_0.1.1_amd64.deb ./package</span><br><span class="line">tree ./package</span><br><span class="line"></span><br><span class="line">./package</span><br><span class="line">├── DEBIAN</span><br><span class="line">│   ├── control  # 自动生成了 control </span><br><span class="line">│   └── md5sums  # md5sums 用于校验</span><br><span class="line">└── opt  # 项目相关的内容，指定在 /opt 下</span><br><span class="line">    └── test</span><br><span class="line">        ├── bin</span><br><span class="line">        │   └── test-app </span><br><span class="line">        ├── include</span><br><span class="line">        │   └── test-cmake</span><br><span class="line">        │       └── test.h</span><br><span class="line">        └── lib</span><br><span class="line">            └── libtest-cmake.a</span><br></pre></td></tr></table></figure>
+
+<p>剩下的安装和检查都类似， 所有代码在: <a target="_blank" rel="noopener" href="https://github.com/LicharYuan/blogs-examples/tree/master/pack_deb_cmake">代码2🔗</a> </p>
+<h2><span id="upload">Upload</span><a href="#upload" class="header-anchor"> 🔗</a></h2><p>上传package有几种方式:</p>
+<pre><code>- making PPA 
+- Custom server and add into source.list. Require make your GPG.
+- Use github.
+</code></pre>
+<p>常用第三种，简单便捷。其他的方式可以参考[6-8]链接:</p>
+<h2><span id="reference">Reference</span><a href="#reference" class="header-anchor"> 🔗</a></h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.debian.org/doc/debian-policy/ch-binary.html">https://www.debian.org/doc/debian-policy/ch-binary.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.ubuntumint.com/create-debian-package/">https://www.ubuntumint.com/create-debian-package/</a></li>
+<li><a target="_blank" rel="noopener" href="https://decovar.dev/blog/2021/03/08/cmake-cpp-library/#from-internal-top-level-project">https://decovar.dev/blog/2021/03/08/cmake-cpp-library/#from-internal-top-level-project</a></li>
+<li><a target="_blank" rel="noopener" href="https://decovar.dev/blog/2021/09/23/cmake-cpack-package-deb-apt/">https://decovar.dev/blog/2021/09/23/cmake-cpack-package-deb-apt/</a></li>
+<li><a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/latest/module/CPack.html">https://cmake.org/cmake/help/latest/module/CPack.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/620672/how-can-i-publish-a-deb-package">https://unix.stackexchange.com/questions/620672/how-can-i-publish-a-deb-package</a></li>
+<li><a target="_blank" rel="noopener" href="https://askubuntu.com/questions/71510/how-do-i-create-a-ppa">https://askubuntu.com/questions/71510/how-do-i-create-a-ppa</a></li>
+<li><a target="_blank" rel="noopener" href="https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/#step-3-signing-your-apt-repository-with-gpg">https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/#step-3-signing-your-apt-repository-with-gpg</a></li>
+</ol>
+
+                        
+          </div>
+          <footer class="article-footer">
+            <a data-url="http://licharyuan.github.io/2023/08/11/cpack-note-md/" data-id="cllaerkod00001lcbamnse540" class="article-share-link">Share</a>
+            
+                
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cmake/" rel="tag">cmake</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/note/" rel="tag">note</a></li></ul>
+
+          </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2023/07/29/quant-note-md/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">量化笔记</div>
+    </a>
+  
+</nav>
+
+      
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/08/11/cpack-note-md/">如何打包你的c++程序 [DEBIAN]</a>
+          </li>
+        
+          <li>
+            <a href="/2023/07/29/quant-note-md/">量化笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2023/07/26/tools-collections/">Tools Collections</a>
+          </li>
+        
+          <li>
+            <a href="/2023/04/16/Hexo-collections/">Hexo 资料汇总</a>
+          </li>
+        
+          <li>
+            <a href="/2023/03/03/NeRF-survey/">NeRF Survey</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/15/Shell-note/">Shell 初级笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Code/">Code</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Papers/">Papers</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cmake/" rel="tag">cmake</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/" rel="tag">tools</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2023 lichar<br>
+      
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/about" class="mobile-nav-link">关于</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<div id="scroll2top" style="position:fixed;bottom:150px;right:50px;cursor: pointer;Z-index:9999">
+<a title="返回顶部" href="#"><img src="/scroll2top/scrollup.png"/></a>
+</div>
+<script src="/scroll2top/scroll2top.js"></script>
+
+
+
+  </div>
+</body>
+</html>
