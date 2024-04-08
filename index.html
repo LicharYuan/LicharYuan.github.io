@@ -202,54 +202,16 @@ mjx-container[display="true"] + br {
         
           <div class="article-entry" itemprop="articleBody">
             
-                      <!-- 
-    <div id="toc">
-        <strong class="sidebar-title"></strong>
-        
-    </div>
-     -->
-                      <p>做过一段时间的模型优化，总结一下经验。</p>
+              <p>做过一段时间的模型优化，总结一下经验。</p>
 <p>模型优化目的是：在指定设备上，实现性能和速度的trade-off. </p>
-<p>工程实践上，我们通常会基于一个已有的模型在已知的硬件上优化。以自己实际的实践中，大概可以分成下面几个方向：</p>
-<ul>
-<li><p>模型调整</p>
-<ul>
-<li>算力分配调整<ul>
-<li>增加第一个stage的计算，减少后面stage的计算</li>
-<li>减少&#x2F;增加 某个 stage 通道数 &amp; 层数</li>
-</ul>
-</li>
-<li>基础算子调整<ul>
-<li>使用 1x3 3x1  conv 来替换 3x3 3x3 conv，虽然改变了感受野但是性能整体不会有太大影响</li>
-<li>使用 large kernel size large stride 来实现快速下采样，比如 7x7 kernel size stride&#x3D;4 来减少一次下采样</li>
-</ul>
-</li>
-<li>算子位置调整 <ul>
-<li>在大的维度做attention，可能是不必要的，可以放在更小的维度来做。需要去rethink每个操作目的，实现更高效的操作</li>
-<li>通常1x1 conv的作用是为了对齐通道数，在设计模型的时候保证各个stage的通道数一致，可以减少不必要的1x1</li>
-</ul>
-</li>
-<li>某些”等效”操作<ul>
-<li>重参数化技巧，比如repVgg, 利用conv的可加性，把多分支合并</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>profile驱动的调整<br>通常分为几个步骤:</p>
-<ul>
-<li>使用profile工具对整个pipeline分析，例如 nsys</li>
-<li>找到耗时大户，分析原因</li>
-<li>寻找解决方案<br>举个实际例子。在自动驾驶的bev-former部署，发现 multi-scale-deformable-conv 这个操作会占据比较大的时间，再深入分析的时候可以发现，每次得到dense-bev操作的时候都需要执行3d-&gt;2d的转换，实际上相机内参固定的时候可以直接使用查找表的形式，类似的方法在fast-bev中也使用了。这样就能加速这个模块的运行时间。类似的操作很多，需要细节的分析和思考。</li>
-</ul>
-</li>
-<li><p>运行类型调整<br>混精度图的运行模式，比如把模型全部量化，使用int8来运行模型，配合硬件的实现可以大幅度减少时间。<br>但对于精度敏感的模块需要额外小心。</p>
-</li>
-<li><p>计算图的调整<br>比如onnxsim的做的操作，节点融合，消除空计算节点，常量折叠等等。这里会涉及到一些 ai 编译器相关的知识。</p>
-</li>
-</ul>
-<p>（后续有别的实践方向再来补充</p>
-
-                        
+                
+                  <p class="article-more-link">
+                    <a href="/2023/09/13/network-optimize/#more">
+                      Read More
+                    </a>
+                  </p>
+                  
+                    
           </div>
           <footer class="article-footer">
             <a data-url="http://licharyuan.github.io/2023/09/13/network-optimize/" data-id="clu9zsaix0010w3wc26jbfm3z" class="article-share-link">Share</a>
@@ -335,28 +297,15 @@ mjx-container[display="true"] + br {
         
           <div class="article-entry" itemprop="articleBody">
             
-                      <!-- 
-    <div id="toc">
-        <strong class="sidebar-title"></strong>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">docker 相关 🔗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">linux 相关命令 🔗</span></a></li></ol>
-    </div>
-     -->
-                      <p>日常记录</p>
-<h2><span id="docker-相关">docker 相关</span><a href="#docker-相关" class="header-anchor"> 🔗</a></h2><ol>
-<li>Docker 内无法使用 gdb attach pid.</li>
-</ol>
-<p>启动时<code>--privileged</code>的参数即可。</p>
-<ol start="2">
-<li>Docker logout 后不退出</li>
-</ol>
-<p>加上 <code>--restart always</code>, 多个终端 <code>docker exec -it $ID bash</code></p>
-<h2><span id="linux-相关命令">linux 相关命令</span><a href="#linux-相关命令" class="header-anchor"> 🔗</a></h2><ol>
-<li>sed &#x2F;g 的用法。</li>
-</ol>
-<p>&#x2F;g 表示 global</p>
-<p>不加&#x2F;g 只会匹配每行的第一个字符。</p>
-
-                        
+              <p>日常杂乱记录.</p>
+                
+                  <p class="article-more-link">
+                    <a href="/2023/08/17/Bugs-record/#more">
+                      Read More
+                    </a>
+                  </p>
+                  
+                    
           </div>
           <footer class="article-footer">
             <a data-url="http://licharyuan.github.io/2023/08/17/Bugs-record/" data-id="clu9zsaid0003w3wcdyrqhprr" class="article-share-link">Share</a>
@@ -458,7 +407,7 @@ mjx-container[display="true"] + br {
             <a data-url="http://licharyuan.github.io/2023/07/29/quant-note-md/" data-id="clu9zsaiz0014w3wcb2rfdt64" class="article-share-link">Share</a>
             
                 
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/note/" rel="tag">note</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/note/" rel="tag">note</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%87%8F%E5%8C%96/" rel="tag">模型量化</a></li></ul>
 
           </footer>
   </div>
@@ -743,7 +692,7 @@ mjx-container[display="true"] + br {
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cmake/" rel="tag">cmake</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/" rel="tag">tools</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cmake/" rel="tag">cmake</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/" rel="tag">tools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%87%8F%E5%8C%96/" rel="tag">模型量化</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 

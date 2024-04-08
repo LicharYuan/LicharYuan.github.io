@@ -5,15 +5,15 @@
   
   <title>模型部署 之network优化 | 小圆的角落</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="做过一段时间的模型优化，总结一下经验。 模型优化目的是：在指定设备上，实现性能和速度的trade-off.  工程实践上，我们通常会基于一个已有的模型在已知的硬件上优化。以自己实际的实践中，大概可以分成下面几个方向：  模型调整  算力分配调整 增加第一个stage的计算，减少后面stage的计算 减少&#x2F;增加 某个 stage 通道数 &amp; 层数   基础算子调整 使用 1x3 3">
+  <meta name="description" content="做过一段时间的模型优化，总结一下经验。 模型优化目的是：在指定设备上，实现性能和速度的trade-off.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="模型部署 之network优化">
 <meta property="og:url" content="http://licharyuan.github.io/2023/09/13/network-optimize/index.html">
 <meta property="og:site_name" content="小圆的角落">
-<meta property="og:description" content="做过一段时间的模型优化，总结一下经验。 模型优化目的是：在指定设备上，实现性能和速度的trade-off.  工程实践上，我们通常会基于一个已有的模型在已知的硬件上优化。以自己实际的实践中，大概可以分成下面几个方向：  模型调整  算力分配调整 增加第一个stage的计算，减少后面stage的计算 减少&#x2F;增加 某个 stage 通道数 &amp; 层数   基础算子调整 使用 1x3 3">
+<meta property="og:description" content="做过一段时间的模型优化，总结一下经验。 模型优化目的是：在指定设备上，实现性能和速度的trade-off.">
 <meta property="og:locale">
 <meta property="article:published_time" content="2023-09-13T02:33:00.000Z">
-<meta property="article:modified_time" content="2024-04-08T09:17:47.504Z">
+<meta property="article:modified_time" content="2024-04-08T09:20:48.917Z">
 <meta property="article:author" content="lichar">
 <meta name="twitter:card" content="summary">
   
@@ -100,6 +100,8 @@
      -->
                       <p>做过一段时间的模型优化，总结一下经验。</p>
 <p>模型优化目的是：在指定设备上，实现性能和速度的trade-off. </p>
+<span id="more"></span>
+
 <p>工程实践上，我们通常会基于一个已有的模型在已知的硬件上优化。以自己实际的实践中，大概可以分成下面几个方向：</p>
 <ul>
 <li><p>模型调整</p>
@@ -226,7 +228,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cmake/" rel="tag">cmake</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/" rel="tag">tools</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cmake/" rel="tag">cmake</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/" rel="tag">tools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%87%8F%E5%8C%96/" rel="tag">模型量化</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
