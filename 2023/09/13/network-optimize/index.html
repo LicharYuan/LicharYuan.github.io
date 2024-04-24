@@ -13,7 +13,7 @@
 <meta property="og:description" content="做过一段时间的模型优化，总结一下经验。 模型优化目的是：在指定设备上，实现性能和速度的trade-off.">
 <meta property="og:locale">
 <meta property="article:published_time" content="2023-09-13T02:33:00.000Z">
-<meta property="article:modified_time" content="2024-04-08T09:20:48.917Z">
+<meta property="article:modified_time" content="2024-04-24T06:51:25.311Z">
 <meta property="article:author" content="lichar">
 <meta name="twitter:card" content="summary">
   
@@ -138,6 +138,8 @@
 </li>
 <li><p>计算图的调整<br>比如onnxsim的做的操作，节点融合，消除空计算节点，常量折叠等等。这里会涉及到一些 ai 编译器相关的知识。</p>
 </li>
+<li><p>合理利用资源<br>更合理的安排线上的资源利用，比如，合理分配cpu &amp; gpu 的负载，合理利用 cudastream，尽可能用异步拷贝，orin平台利用其稀疏化，DLA计算等等。</p>
+</li>
 </ul>
 <p>（后续有别的实践方向再来补充</p>
 
@@ -152,6 +154,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2024/04/08/hpc-python-note/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          hpc-python-note
+        
+      </div>
+    </a>
   
   
     <a href="/2023/08/25/wirte-note/" id="article-nav-older" class="article-nav-link-wrap">
@@ -173,6 +184,10 @@
     <h3 class="widget-title">Recent posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2024/04/08/hpc-python-note/">hpc-python-note</a>
+          </li>
         
           <li>
             <a href="/2023/09/13/network-optimize/">模型部署 之network优化</a>
@@ -219,7 +234,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Code/">Code</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Info/">Info</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Papers/">Papers</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Code/">Code</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Info/">Info</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Papers/">Papers</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -228,7 +243,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cmake/" rel="tag">cmake</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/" rel="tag">tools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%87%8F%E5%8C%96/" rel="tag">模型量化</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cmake/" rel="tag">cmake</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/" rel="tag">tools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%87%8F%E5%8C%96/" rel="tag">模型量化</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -237,7 +252,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

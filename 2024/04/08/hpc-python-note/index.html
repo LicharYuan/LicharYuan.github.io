@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>hpc-python-note | 小圆的角落</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近在读  ，本文是阅读笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hpc-python-note">
+<meta property="og:url" content="http://licharyuan.github.io/2024/04/08/hpc-python-note/index.html">
+<meta property="og:site_name" content="小圆的角落">
+<meta property="og:description" content="最近在读  ，本文是阅读笔记。">
+<meta property="og:locale">
+<meta property="og:image" content="https://pepa.holla.cz/wp-content/uploads/2016/08/High-Performance-Python.pdf">
+<meta property="article:published_time" content="2024-04-08T09:45:55.000Z">
+<meta property="article:modified_time" content="2024-04-24T10:49:37.958Z">
+<meta property="article:author" content="lichar">
+<meta property="article:tag" content="note">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pepa.holla.cz/wp-content/uploads/2016/08/High-Performance-Python.pdf">
+  
+  
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Ubuntu:400,700,400italic" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">小圆的角落</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">好乐无荒 良士休休</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <a id="nav-github-link" class="nav-icon" href="https://github.com/LicharYuan" target="_blank"></a>
+        
+        
+        
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://licharyuan.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-hpc-python-note" class="article article-type-post" itemscope
+  itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2024/04/08/hpc-python-note/" class="article-date">
+  <time datetime="2024-04-08T09:45:55.000Z" itemprop="datePublished">2024-04-08</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Code/">Code</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      hpc-python-note
+    </h1>
+  
+
+        </header>
+        
+          <div class="article-entry" itemprop="articleBody">
+            
+                      <!-- 
+    <div id="toc">
+        <strong class="sidebar-title"></strong>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Chapter 1 🔗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Chapter 2 🔗</span></a></li></ol>
+    </div>
+     -->
+                      <p>最近在读 <high-performance-python> ，本文是阅读笔记。</high-performance-python></p>
+<p><img src="https://pepa.holla.cz/wp-content/uploads/2016/08/High-Performance-Python.pdf" alt="书籍链接"></p>
+<span id="more"></span>
+
+<div class="toc">
+
+<!-- toc -->
+
+<ul>
+<li><a href="#chapter-1">Chapter 1</a></li>
+<li><a href="#chapter-2">Chapter 2</a></li>
+</ul>
+<!-- tocstop -->
+
+</div>
+
+<p><em>本文的部分内容由ChatGPT提供</em></p>
+<h2><span id="chapter-1">Chapter 1</span><a href="#chapter-1" class="header-anchor"> 🔗</a></h2><p>C1 主要介绍了计算机的存储结构 (RAM, L1&#x2F;L2 Cache)，通信层 （总线）, python的特点。比较重要的信息如下：</p>
+<ol>
+<li><p>由于全局解释器锁（GIL）的存在，每个CPU核心一次只能执行一个线程的Python字节码。对于CPU密集型任务，多线程通常无法提升性能。然而，对于IO密集型任务，多线程可以有效提升性能。因为在等待IO完成时，Python线程会释放GIL，允许其他线程执行，从而充分利用了CPU资源。</p>
+</li>
+<li><p>Python由于其动态特性，无法像C++那样直接利用向量化加速。但是可以通过第三方库，如NumPy、Cython、OpenCV等，来实现类似的功能。</p>
+</li>
+<li><p>GPU和CPU之间通过PCI总线进行通信，相较于前端总线，PCI总线的传输速度较慢。因此，GPU的数据传输通常是一个耗时的操作。</p>
+</li>
+<li><p>Python对象的内存布局并非最优，这是由于Python是一种垃圾回收语言，内存会自动分配和释放。这可能导致内存碎片化，影响数据传输到CPU缓存的效率。</p>
+</li>
+</ol>
+<h2><span id="chapter-2">Chapter 2</span><a href="#chapter-2" class="header-anchor"> 🔗</a></h2><p>C2 主要讲了一些 profile的方法，并利用这些工具来找到耗时瓶颈。主要方法如下：</p>
+<ol>
+<li><p>timeit：一个Python模块，可以用于测量小段代码的执行时间。 e.g: <code>python -m timeit -n 5 -r 5 -s &quot;import julia1&quot; &quot;julia1.calc_pure_python(desired_width=1000, max_iterations=300)&quot;</code> </p>
+</li>
+<li><p>Unix time命令：一个Unix系统命令，可以用来测量程序的执行时间。e.g. <code>/usr/bin/time -p python julia1_nopil.py</code> </p>
+</li>
+<li><p>cProfile: Python标准库中的性能分析工具, 测量代码中各个函数的执行时间和调用次数。  e.g.</p>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cProfile</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_function</span>():</span><br><span class="line">    <span class="comment"># 这里是你要分析的代码</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line">cProfile.run(<span class="string">&#x27;my_function()&#x27;</span>, <span class="string">&#x27;profile_results.prof)</span></span><br></pre></td></tr></table></figure>
+<p>可以用 <code>runsnakerun</code>来可视化结果.</p>
+<ol start="4">
+<li>line_profiler：用于进行逐行性能分析的工具，可以提供每一行代码的执行次数和消耗时间. <strong>逐行分析会产生较大的性能开销</strong> e.g.</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> line_profiler <span class="keyword">import</span> LineProfiler</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义要分析的函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_function</span>():</span><br><span class="line">    <span class="comment"># 这里是你要分析的代码</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 LineProfiler 对象</span></span><br><span class="line">profiler = LineProfiler()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加要分析的函数到 profiler 对象</span></span><br><span class="line">profiler.add_function(my_function)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行分析</span></span><br><span class="line">profiler.run(<span class="string">&#x27;my_function()&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打印分析结果</span></span><br><span class="line">profiler.print_stats()</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>memory_profiler：用于分析内存使用情况的工具，可以帮助识别内存泄漏和优化内存使用。e.g.</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> memory_profiler <span class="keyword">import</span> profile</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者使用 @profile 装饰器来标记要分析的函数，后执行函数</span></span><br><span class="line"><span class="comment"># @profile</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_function</span>():</span><br><span class="line">    <span class="comment"># 这里是你要分析的代码</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行分析</span></span><br><span class="line"><span class="comment"># 导入 memory_profiler 中的函数</span></span><br><span class="line"><span class="keyword">from</span> memory_profiler <span class="keyword">import</span> memory_usage</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行 my_function 并记录内存使用情况</span></span><br><span class="line">mem_usage = memory_usage(my_function)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打印每次内存使用量</span></span><br><span class="line"><span class="keyword">for</span> mem <span class="keyword">in</span> mem_usage:</span><br><span class="line">    <span class="built_in">print</span>(mem)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<ol start="6">
+<li>heapy: 一个用于分析 Python 堆对象的库，它可以帮助你追踪内存中的所有对象，并提供详细的分析报告，包括每种对象类型的数量、大小、引用关系等信息。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> guppy <span class="keyword">import</span> hpy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Heap 对象</span></span><br><span class="line">hp = hpy()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义要分析的函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_function</span>():</span><br><span class="line">    <span class="comment"># 这里是你要分析的代码</span></span><br><span class="line">    <span class="comment"># 在需要时调用hp.heap()获取堆对象统计信息</span></span><br><span class="line">    <span class="built_in">print</span>(hp.heap())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行函数</span></span><br><span class="line">my_function()</span><br></pre></td></tr></table></figure>
+
+
+<ol start="7">
+<li><p>dis: 用于反汇编Python字节码的工具，可以帮助理解Python代码背后的CPython虚拟机指令。 <code>import dis; dis.dis(my_function)</code>. 如果我们的字节码指令更少，通常意味着在运行时虚拟机需要执行的操作也较少。</p>
+</li>
+<li><p>Dowser: 一个用于分析 Python 程序内存使用情况的工具，它提供了一个简单易用的 Web 界面，用于展示 Python 程序的内存占用情况.</p>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">my_function</span>():</span><br><span class="line">    <span class="comment"># 这里是你要分析的代码</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 启动 Dowser 的 HTTP 服务器</span></span><br><span class="line">    dowser.launch()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 等待用户访问 Dowser 的 Web 界面</span></span><br><span class="line">    <span class="built_in">input</span>(<span class="string">&quot;Press Enter to continue...&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    my_function()</span><br></pre></td></tr></table></figure>
+
+<ol start="9">
+<li>perf: 一个强大的 Linux 性能计数器工具，可以用于分析系统级的性能指标，如 CPU 使用率、内存访问、磁盘 I&#x2F;O 等</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">perf <span class="built_in">stat</span> &lt;your_command&gt;  <span class="comment"># 用于收集指定命令的性能统计信息，如 CPU 指令数、CPU 周期数、缓存命中率等</span></span><br><span class="line"></span><br><span class="line">perf record -e instructions &lt;your_command&gt; <span class="comment"># 用于收集指定命令的性能数据，并将数据保存到文件中以供后续分析。你可以通过 -e 选项来指定收集的事件，如 CPU 指令数、缓存命中率等</span></span><br><span class="line"></span><br><span class="line">perf report <span class="comment">#  用于分析 perf record 命令生成的性能数据文件，并生成性能报告。该命令将会显示各种性能指标的统计信息、函数调用图等</span></span><br><span class="line"></span><br><span class="line">perf top <span class="comment"># 实时显示当前系统中的性能热点。该命令会持续更新显示当前系统中占用 CPU 时间最多的函数或代码行</span></span><br><span class="line"></span><br><span class="line">perf annotate &lt;function_name&gt; <span class="comment"># 显示指定函数的汇编代码和性能指标。该命令可以帮助你了解特定函数的执行情况，找出性能瓶颈 </span></span><br></pre></td></tr></table></figure>
+
+
+                        
+          </div>
+          <footer class="article-footer">
+            <a data-url="http://licharyuan.github.io/2024/04/08/hpc-python-note/" data-id="clvdp0me80000x9cb8xld6ysl" class="article-share-link">Share</a>
+            
+                
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/note/" rel="tag">note</a></li></ul>
+
+          </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2023/09/13/network-optimize/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">模型部署 之network优化</div>
+    </a>
+  
+</nav>
+
+      
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/04/08/hpc-python-note/">hpc-python-note</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/13/network-optimize/">模型部署 之network优化</a>
+          </li>
+        
+          <li>
+            <a href="/2023/08/25/wirte-note/">写作学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2023/08/17/Bugs-record/">日常记录</a>
+          </li>
+        
+          <li>
+            <a href="/2023/08/11/cpack-note-md/">如何打包你的c++程序 [DEBIAN]</a>
+          </li>
+        
+          <li>
+            <a href="/2023/07/29/quant-note-md/">量化笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2023/07/26/tools-collections/">Tools Collections</a>
+          </li>
+        
+          <li>
+            <a href="/2023/04/16/Hexo-collections/">Hexo 资料汇总</a>
+          </li>
+        
+          <li>
+            <a href="/2023/03/03/NeRF-survey/">NeRF Survey</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/15/Shell-note/">Shell 初级笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Code/">Code</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Info/">Info</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Papers/">Papers</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/3D/" rel="tag">3D</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NeRF/" rel="tag">NeRF</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cmake/" rel="tag">cmake</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/note/" rel="tag">note</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/" rel="tag">tools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%87%8F%E5%8C%96/" rel="tag">模型量化</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 lichar<br>
+      
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/about" class="mobile-nav-link">关于</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<div id="scroll2top" style="position:fixed;bottom:150px;right:50px;cursor: pointer;Z-index:9999">
+<a title="返回顶部" href="#"><img src="/scroll2top/scrollup.png"/></a>
+</div>
+<script src="/scroll2top/scroll2top.js"></script>
+
+
+
+  </div>
+</body>
+</html>
