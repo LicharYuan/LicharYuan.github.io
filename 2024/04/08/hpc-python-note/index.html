@@ -13,7 +13,7 @@
 <meta property="og:description" content="最近在读 “High-Performance-Python” ，本文是阅读笔记。 书籍链接">
 <meta property="og:locale">
 <meta property="article:published_time" content="2024-04-08T09:45:55.000Z">
-<meta property="article:modified_time" content="2024-04-24T10:50:11.440Z">
+<meta property="article:modified_time" content="2024-04-25T02:49:58.662Z">
 <meta property="article:author" content="lichar">
 <meta property="article:tag" content="note">
 <meta name="twitter:card" content="summary">
@@ -100,7 +100,7 @@
                       <!-- 
     <div id="toc">
         <strong class="sidebar-title"></strong>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Chapter 1 🔗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Chapter 2 🔗</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Chapter 1: 理解 Python 🔗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Chapter 2: 分析性能瓶颈 🔗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Chapter 3: 列表和元组 🔗</span></a></li></ol>
     </div>
      -->
                       <p>最近在读 “High-Performance-Python” ，本文是阅读笔记。</p>
@@ -112,15 +112,16 @@
 <!-- toc -->
 
 <ul>
-<li><a href="#chapter-1">Chapter 1</a></li>
-<li><a href="#chapter-2">Chapter 2</a></li>
+<li><a href="#chapter-1-%E7%90%86%E8%A7%A3-python">Chapter 1: 理解 Python</a></li>
+<li><a href="#chapter-2-%E5%88%86%E6%9E%90%E6%80%A7%E8%83%BD%E7%93%B6%E9%A2%88">Chapter 2: 分析性能瓶颈</a></li>
+<li><a href="#chapter-3-%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84">Chapter 3: 列表和元组</a></li>
 </ul>
 <!-- tocstop -->
 
 </div>
 
 <p><em>本文的部分内容由ChatGPT提供</em></p>
-<h2><span id="chapter-1">Chapter 1</span><a href="#chapter-1" class="header-anchor"> 🔗</a></h2><p>C1 主要介绍了计算机的存储结构 (RAM, L1&#x2F;L2 Cache)，通信层 （总线）, python的特点。比较重要的信息如下：</p>
+<h2><span id="chapter-1-理解-python">Chapter 1: 理解 Python</span><a href="#chapter-1-理解-python" class="header-anchor"> 🔗</a></h2><p>C1 主要介绍了计算机的存储结构 (RAM, L1&#x2F;L2 Cache)，通信层 （总线）, python的特点。比较重要的信息如下：</p>
 <ol>
 <li><p>由于全局解释器锁（GIL）的存在，每个CPU核心一次只能执行一个线程的Python字节码。对于CPU密集型任务，多线程通常无法提升性能。然而，对于IO密集型任务，多线程可以有效提升性能。因为在等待IO完成时，Python线程会释放GIL，允许其他线程执行，从而充分利用了CPU资源。</p>
 </li>
@@ -131,7 +132,7 @@
 <li><p>Python对象的内存布局并非最优，这是由于Python是一种垃圾回收语言，内存会自动分配和释放。这可能导致内存碎片化，影响数据传输到CPU缓存的效率。</p>
 </li>
 </ol>
-<h2><span id="chapter-2">Chapter 2</span><a href="#chapter-2" class="header-anchor"> 🔗</a></h2><p>C2 主要讲了一些 profile的方法，并利用这些工具来找到耗时瓶颈。主要方法如下：</p>
+<h2><span id="chapter-2-分析性能瓶颈">Chapter 2: 分析性能瓶颈</span><a href="#chapter-2-分析性能瓶颈" class="header-anchor"> 🔗</a></h2><p>C2 主要讲了一些 profile的方法，并利用这些工具来找到耗时瓶颈。主要方法如下：</p>
 <ol>
 <li><p>timeit：一个Python模块，可以用于测量小段代码的执行时间。 e.g: <code>python -m timeit -n 5 -r 5 -s &quot;import julia1&quot; &quot;julia1.calc_pure_python(desired_width=1000, max_iterations=300)&quot;</code> </p>
 </li>
@@ -172,7 +173,7 @@
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">perf <span class="built_in">stat</span> &lt;your_command&gt;  <span class="comment"># 用于收集指定命令的性能统计信息，如 CPU 指令数、CPU 周期数、缓存命中率等</span></span><br><span class="line"></span><br><span class="line">perf record -e instructions &lt;your_command&gt; <span class="comment"># 用于收集指定命令的性能数据，并将数据保存到文件中以供后续分析。你可以通过 -e 选项来指定收集的事件，如 CPU 指令数、缓存命中率等</span></span><br><span class="line"></span><br><span class="line">perf report <span class="comment">#  用于分析 perf record 命令生成的性能数据文件，并生成性能报告。该命令将会显示各种性能指标的统计信息、函数调用图等</span></span><br><span class="line"></span><br><span class="line">perf top <span class="comment"># 实时显示当前系统中的性能热点。该命令会持续更新显示当前系统中占用 CPU 时间最多的函数或代码行</span></span><br><span class="line"></span><br><span class="line">perf annotate &lt;function_name&gt; <span class="comment"># 显示指定函数的汇编代码和性能指标。该命令可以帮助你了解特定函数的执行情况，找出性能瓶颈 </span></span><br></pre></td></tr></table></figure>
 
-
+<h2><span id="chapter-3-列表和元组">Chapter 3: 列表和元组</span><a href="#chapter-3-列表和元组" class="header-anchor"> 🔗</a></h2>
                         
           </div>
           <footer class="article-footer">
